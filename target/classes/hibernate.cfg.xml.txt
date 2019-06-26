@@ -1,3 +1,4 @@
+<!--
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
@@ -10,12 +11,14 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">12345</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <mapping class="com.manager.entity.Status"></mapping>
-        <mapping class="com.manager.entity.Role"></mapping>
-        <mapping class="com.manager.entity.User"></mapping>
-        <mapping class="com.manager.entity.CheckInOut"></mapping>
-        <mapping class="com.manager.entity.Department"></mapping>
-        <mapping class="com.manager.entity.LeaveApplication"></mapping>
-        <mapping class="com.manager.entity.LeaveData"></mapping>
+        <mapping class="Status"></mapping>
+        <mapping class="Role"></mapping>
+        <mapping class="User"></mapping>
+        <mapping class="CheckInOut"></mapping>
+        <mapping class="Department"></mapping>
+        <mapping class="LeaveApplication"></mapping>
+        <mapping class="LeaveData"></mapping>
+        <mapping class="MessageForUser"></mapping>
+        <mapping class="Message"></mapping>
     </session-factory>
-</hibernate-configuration>
+</hibernate-configuration>-->
