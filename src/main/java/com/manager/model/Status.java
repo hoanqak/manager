@@ -21,8 +21,11 @@ public class Status {
     private int id;
     @Column
     private String status;
-    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    List<User> listUser;
+
+	/*
+	 * @OneToMany(mappedBy = "status", fetch = FetchType.LAZY, cascade =
+	 * CascadeType.REMOVE) List<User> listUser;
+	 */
     public Status(String status) {
         this.status = status;
     }

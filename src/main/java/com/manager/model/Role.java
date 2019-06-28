@@ -20,8 +20,11 @@ public class Role {
     private int id;
     @Column
     private String role;
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<User> listUser;
+
+	/*
+	 * @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch =
+	 * FetchType.LAZY) List<User> listUser;
+	 */
     public Role(String role) {
         this.role = role;
     }

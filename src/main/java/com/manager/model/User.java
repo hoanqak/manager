@@ -24,7 +24,7 @@ public class User {
     private String name;
     @Column(name="birth_day")
     private Date birthDay;
-    @Column(name="email")
+    @Column(name="email", unique = true)
     private String email;
     @Column(name="address")
     private String address;
@@ -48,6 +48,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_status")
     private Status status;
+    @ManyToOne
+    @JoinColumn(name = "id_department")
+    private Department department;
 
     public User(String name, Date birthDay, String email, String address, String password, String phoneNumber, String picture, String kindOfEmployee) {
         this.name = name;
@@ -59,4 +62,6 @@ public class User {
         this.picture = picture;
         this.kindOfEmployee = kindOfEmployee;
     }
+    
+    
 }
