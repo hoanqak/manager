@@ -1,26 +1,23 @@
 package com.manager.controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.ResetPasswordDTO;
+import com.manager.model.CheckInOut;
 import com.manager.repository.PasswordIssuingCodeRepository;
+import com.manager.service.Impl.CheckInOutImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.manager.dto.LoginDTO;
-import com.manager.dto.RegisterDTO;
 import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
@@ -36,6 +33,12 @@ public class EmployeeController {
 	private UserServiceImpl userServiceImpl;
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private CheckInOutRepository checkInOutRepository;
+
+	@Autowired
+	private CheckInOutImpl checkInOutImpl;
 
 	@Autowired
 	private CheckInOutRepository checkInOuRepository;
@@ -85,11 +88,36 @@ public class EmployeeController {
         return userServiceImpl.resetPassword(resetPasswordDTO, code, id);
     }
 
-    @PostMapping("/checkIn")
-	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO){
-		return userServiceImpl.checkIn(checkInOutDTO);
+    @PutMapping("resetPassword")
+	public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO){
+		return userServiceImpl.changePassword(resetPasswordDTO);
 	}
 
+    @PostMapping("/checkIn")
+	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO){
+		return checkInOutImpl.checkIn(checkInOutDTO);
+	}
+
+	@GetMapping("/test")
+	public String test(){
+		Date date = checkInOuRepository.getDate();
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		String dateCheck = simpleDateFormat.format(date);
+
+		Calendar date1 = Calendar.getInstance();
+		date1.set(Calendar.DAY_OF_MONTH, 28);
+		String dateCheck2 = simpleDateFormat.format(date1.getTime());
+
+		System.out.println(dateCheck + "-----" +dateCheck2);
+		System.out.println(dateCheck.equals(dateCheck2));
+		return "hihi";
+	}
+
+	@PostMapping("checkOut")
+	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO){
+		return checkInOutImpl.checkOut(checkInOutDTO);
+	}
 	
 	
 }

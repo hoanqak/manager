@@ -47,6 +47,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CheckInOutRepository checkInOutRepository;
 
+    @Autowired
+    private CheckInOutImpl checkInOutImpl;
+
     @Override
     public ResponseEntity<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         User user = userRepository.searchUserByEmail(loginDTO.getEmail());
@@ -143,9 +146,8 @@ public class UserServiceImpl implements UserService {
                     passwordIssuingCode.setCode(md5.convertToMD5(String.valueOf(random)));
                     passwordIssuingCodeRepository.save(passwordIssuingCode);
                     return new ResponseEntity<String>("COMPLETE", HttpStatus.OK);
-                }
-                else{
-                    return new ResponseEntity<String>("PASSWORD_INCORRECT",HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<String>("PASSWORD_INCORRECT", HttpStatus.OK);
                 }
             }
         }
@@ -164,71 +166,70 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<String>("SUCCESS", HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO) {
+   // @Override
+   /* public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO) {
         User user = userRepository.findById(checkInOutDTO.getUserId()).get();
         System.out.println(user);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(checkInOutDTO.getDateCheckIn());
         CheckInOut checkInOut = new CheckInOut();
-        int workTime = 0;
         int hourCheckIn = calendar.get(Calendar.HOUR_OF_DAY);
         int minuteCheckIn = calendar.get(Calendar.MINUTE);
-        System.out.println("gio: "+ hourCheckIn);
+        System.out.println("gio: " + hourCheckIn);
         System.out.println("Phut: " + minuteCheckIn);
-        if(calendar.get(Calendar.HOUR_OF_DAY) < 8 && calendar.get(Calendar.MINUTE) < 30){
-            return new ResponseEntity<String>("chua den gio", HttpStatus.OK);
-        }else if(hourCheckIn >= 8&& minuteCheckIn >= 30 && hourCheckIn <= 9){
-            calendar.set(Calendar.HOUR_OF_DAY, 9);
-            calendar.set(Calendar.MINUTE, 0);
-            checkInOut.setStartTime(calendar.getTime());
-            checkInOut.setDayCheckIn(calendar.getTime());
-            checkInOut.setUser(user);
-            checkInOutRepository.save(checkInOut);
-            return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-        }else if(hourCheckIn >= 9 && hourCheckIn <= 10 && minuteCheckIn <= 30){
-            checkInOut.setDayCheckIn(calendar.getTime());
-            checkInOut.setStartTime(calendar.getTime());
-            checkInOut.setUser(user);
 
-            checkInOutRepository.save(checkInOut);
-            return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-        }else if(hourCheckIn >= 10 && minuteCheckIn > 30 && hourCheckIn < 11){
-            calendar.set(Calendar.HOUR_OF_DAY, 13);
-            calendar.set(Calendar.MINUTE, 0);
-            checkInOut.setDayCheckIn(calendar.getTime());
-            checkInOut.setStartTime(calendar.getTime());
-            checkInOut.setUser(user);
+        Date date = checkInOutRepository.getDate();
 
-            checkInOutRepository.save(checkInOut);
-            return new ResponseEntity<>("FAIL", HttpStatus.OK);
-        }
-        else if(hourCheckIn >= 12  && (hourCheckIn <= 13 && minuteCheckIn == 0)){
-            checkInOut.setUser(user);
-            checkInOut.setDayCheckIn(calendar.getTime());
-            calendar.set(Calendar.HOUR_OF_DAY, 13);
-            calendar.set(Calendar.MINUTE, 0);
-            checkInOut.setStartTime(calendar.getTime());
-            checkInOutRepository.save(checkInOut);
-            return new ResponseEntity<String>("CHECKIN_SUCCESS", HttpStatus.OK);
-        }
-        else if(hourCheckIn >= 13 && (hourCheckIn <=16 && minuteCheckIn == 0)) {
-            checkInOut.setDayCheckIn(calendar.getTime());
-            checkInOut.setStartTime(calendar.getTime());
-            checkInOut.setUser(user);
-            return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>("khong tinh ", HttpStatus.OK);
+        Date date1 = new Date();
+
+        if (checkInOutImpl.compareDate(date, date1)) {
+            return new ResponseEntity<>("Checked", HttpStatus.OK);
+        } else {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 8 && calendar.get(Calendar.MINUTE) < 30) {
+                return new ResponseEntity<String>("chua den gio", HttpStatus.OK);
+            } else if (hourCheckIn >= 8 && minuteCheckIn >= 30 && hourCheckIn <= 9) {
+                calendar.set(Calendar.HOUR_OF_DAY, 9);
+                calendar.set(Calendar.MINUTE, 0);
+                checkInOut.setStartTime(calendar.getTime());
+                checkInOut.setDayCheckIn(calendar.getTime());
+                checkInOut.setUser(user);
+                checkInOutRepository.save(checkInOut);
+                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+            } else if (hourCheckIn >= 9 && hourCheckIn <= 10 && minuteCheckIn <= 30) {
+                checkInOut.setDayCheckIn(calendar.getTime());
+                checkInOut.setStartTime(calendar.getTime());
+                checkInOut.setUser(user);
+
+                checkInOutRepository.save(checkInOut);
+                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+            } else if (hourCheckIn >= 10 && minuteCheckIn > 30 && hourCheckIn < 11) {
+                calendar.set(Calendar.HOUR_OF_DAY, 13);
+                calendar.set(Calendar.MINUTE, 0);
+                checkInOut.setDayCheckIn(calendar.getTime());
+                checkInOut.setStartTime(calendar.getTime());
+                checkInOut.setUser(user);
+
+                checkInOutRepository.save(checkInOut);
+                return new ResponseEntity<>("FAIL", HttpStatus.OK);
+            } else if (hourCheckIn >= 12 && (hourCheckIn <= 13 && minuteCheckIn == 0)) {
+                checkInOut.setUser(user);
+                checkInOut.setDayCheckIn(calendar.getTime());
+                calendar.set(Calendar.HOUR_OF_DAY, 13);
+                calendar.set(Calendar.MINUTE, 0);
+                checkInOut.setStartTime(calendar.getTime());
+                checkInOutRepository.save(checkInOut);
+                return new ResponseEntity<String>("CHECKIN_SUCCESS", HttpStatus.OK);
+            } else if (hourCheckIn >= 13 && (hourCheckIn <= 16 && minuteCheckIn == 0)) {
+                checkInOut.setDayCheckIn(calendar.getTime());
+                checkInOut.setStartTime(calendar.getTime());
+                checkInOut.setUser(user);
+                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("khong tinh ", HttpStatus.OK);
+            }
         }
 
-    }
-
-    @Override
-    public ResponseEntity<User> getUserById(int id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    }*/
 
     @Override
     public ResponseEntity<User> editProfile(int id) {
@@ -237,15 +238,53 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity checkOut() {
+    public ResponseEntity requestADayOff(Date fromDate, Date toDate, String reason) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public ResponseEntity requestADayOff(Date fromDate, Date toDate, String reason) {
-        // TODO Auto-generated method stub
-        return null;
+    public int checkPassword(ResetPasswordDTO resetPasswordDTO){
+        if(resetPasswordDTO != null){
+            if(resetPasswordDTO.getNewPassword() != null && resetPasswordDTO.getNewPassword1() != null &&
+                    resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getNewPassword1())){
+                if(resetPasswordDTO.getNewPassword().length() >=  8 && resetPasswordDTO.getNewPassword().length() <= 13){
+                    return 1;
+                }
+                else {
+                    return -2;
+                }
+            }else
+            return 0;
+        }
+        return -1;
+    }
+
+    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO){
+        if(checkPassword(resetPasswordDTO) == 1){
+            String password = md5.convertToMD5(resetPasswordDTO.getPassword());
+            User user = userRepository.getUserByEmailAndPassword(resetPasswordDTO.getEmail(), password);
+
+            if(user != null){
+                if(user.getPassword().equals(resetPasswordDTO.getNewPassword())){
+                    return new ResponseEntity("COMPLETE", HttpStatus.OK);
+                }
+
+                String newPassword = md5.convertToMD5(resetPasswordDTO.getNewPassword());
+                user.setPassword(newPassword);
+                userRepository.save(user);
+                return new ResponseEntity("COMPLETE", HttpStatus.OK);
+            }
+            else{
+                return new ResponseEntity("WRONG_EMAIL_OR_PASSWORD", HttpStatus.OK);
+            }
+
+        } else if(checkPassword(resetPasswordDTO) == 0){
+            return new ResponseEntity("PASSWORD_INCORRECT", HttpStatus.OK);
+        }
+        else if(checkPassword(resetPasswordDTO) == -2){
+            return new ResponseEntity("MAX_SIZE_PASSWORD_13_MIN_SIZE_PASSWORD_8", HttpStatus.OK);
+        }
+        return new ResponseEntity("RESET_PASSWORD_NOT_EXITS", HttpStatus.OK);
     }
 
 }

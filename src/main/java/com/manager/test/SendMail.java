@@ -1,3 +1,4 @@
+/*
 package com.manager.test;
 
 import java.io.File;
@@ -21,9 +22,11 @@ import javax.mail.internet.MimeMultipart;
 public class SendMail {
 	public static void main(String args[]) throws AddressException, MessagingException {
 		sendText();
-		/*
+		*/
+/*
 		 * sendHTML(); sendFile();
-		 */
+		 *//*
+
 		System.out.println("done");
 	}
 
@@ -149,3 +152,4 @@ public class SendMail {
 		transport.close();
 	}
 }
+*/

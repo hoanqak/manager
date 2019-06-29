@@ -27,6 +27,8 @@ public class CheckInOut {
     private Date startTime;
     @Column(name="end_time")
     private Date endTime;
+    @Column(name = "total_time")
+    private double totalTime;
     @Column(name="updated_time")
     @UpdateTimestamp
     private Date updatedTime;

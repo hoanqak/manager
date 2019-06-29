@@ -15,7 +15,7 @@ public class UserDTO {
 	private String avatar;
 	private int id;
 	private String name;
-	private String possition;
+	private String position;
 	private String phone;
 	private String email;
 	private Date startDate;
