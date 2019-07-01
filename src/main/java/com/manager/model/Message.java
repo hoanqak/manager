@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table
 @Getter
@@ -16,20 +17,20 @@ import java.util.Date;
 @NoArgsConstructor
 public class Message {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name="status")
-    private boolean status;
-    @Column(name  = "created_time")
-    @CreationTimestamp
-    private Date createdTime;
-    @ManyToOne
-    @JoinColumn(name = "id_leave_application")
-    private LeaveApplication leaveApplication;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	@Column(name = "status")
+	private boolean status;
+	@Column(name = "created_time")
+	@CreationTimestamp
+	private Date createdTime;
+	@ManyToOne
+	@JoinColumn(name = "id_leave_application")
+	private LeaveApplication leaveApplication;
 
-    public Message(boolean status, LeaveApplication leaveApplication) {
-        this.status = status;
-        this.leaveApplication = leaveApplication;
-    }
+	public Message(boolean status, LeaveApplication leaveApplication) {
+		this.status = status;
+		this.leaveApplication = leaveApplication;
+	}
 }

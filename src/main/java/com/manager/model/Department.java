@@ -14,9 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "department")
 public class Department {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column
-    private String name;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	@Column
+	private String name;
 }

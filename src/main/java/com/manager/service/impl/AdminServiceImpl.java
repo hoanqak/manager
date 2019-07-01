@@ -2,7 +2,9 @@ package com.manager.service.impl;
 
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.UserDTO;
+import com.manager.model.CheckInOut;
 import com.manager.model.User;
+import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Email;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -23,12 +27,8 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	UserRepository userRepository;
-
-
-	@Override
-	public User findUserByEmail(String email) {
-		return userRepository.findUserByEmail(email);
-	}
+	@Autowired
+	CheckInOutRepository checkInOutRepository;
 
 	@Override
 	public ResponseEntity getAllUserInPage(int pageNumber, int pageSize) {
@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public ResponseEntity createUser(User user) {
 		User userByEmail = userRepository.findUserByEmail(user.getEmail());
-		if(userByEmail != null){
+		if (userByEmail != null) {
 			return new ResponseEntity("USER_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
 		}
 		userRepository.save(user);
@@ -57,10 +57,43 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public ResponseEntity updateUser(User user) {
+	public ResponseEntity updateUserStatus(int id, UserDTO userDTO) {
+		User user = userRepository.findUserById(id);
+
+		user.setStatus(userDTO.getStatus());
+		user.setDepartment(userDTO.getDepartment());
+		user.setPosition(userDTO.getPosition());
+		user.setKindOfEmployee(userDTO.getKindOfEmployee());
+		user.setRole(userDTO.getRole());
+		user.setUpdatedDate(new Date(userDTO.getUpdatedDate()));
+
 		userRepository.save(user);
 		return new ResponseEntity("UPDATE_USER_SUCCESS", HttpStatus.OK);
+
 	}
+
+	@Override
+	public ResponseEntity getUserByIdToEditPage(int id) {
+		User user = userRepository.findUserById(id);
+		if (user == null) return new ResponseEntity("USER_DOESNT_EXISTS", HttpStatus.OK);
+		UserDTO userDTO = new UserDTO(user);
+		return new ResponseEntity(userDTO, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity getHistoryCheckInOutByDate(long date, int pageNumber, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		Date date1 = new Date(date);
+		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckIn(pageable, date1);
+
+		List<CheckInOut> checkInOuts = page.getContent();
+		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
+		for (CheckInOut checkInOut : checkInOuts) {
+			checkInOutDTOS.add(new CheckInOutDTO(checkInOut));
+		}
+		return ResponseEntity.ok(checkInOutDTOS);
+	}
+
 
 	@Override
 	public ResponseEntity getCheckInOutByTime(long startDate, long endDate, int pageNumber, int size) {
@@ -81,4 +114,6 @@ public class AdminServiceImpl implements AdminService {
 	public ResponseEntity getLeaveApplicationOfUserByTime(String userId, long startDate, long endDate) {
 		return null;
 	}
+
+
 }

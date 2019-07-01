@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 
 import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -17,21 +18,21 @@ import java.util.Date;
 @NoArgsConstructor
 public class LeaveApplication {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(name="start_time")
-    private Date startTime;
-    @Column(name="end_time")
-    private Date endTime;
-    @Column
-    private String reason;
-    private String status;
-    @Column(name="created_time")
-    private Date createdTime;
-    @Column(name="updated_time")
-    private Date updatedTime;
-    @ManyToOne
-    @JoinColumn(name="id_user")
-    private User user;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
+	@Column(name = "start_time")
+	private Date startTime;
+	@Column(name = "end_time")
+	private Date endTime;
+	@Column
+	private String reason;
+	private String status;
+	@Column(name = "created_time")
+	private Date createdTime;
+	@Column(name = "updated_time")
+	private Date updatedTime;
+	@ManyToOne
+	@JoinColumn(name = "id_user")
+	private User user;
 }

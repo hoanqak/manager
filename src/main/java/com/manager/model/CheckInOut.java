@@ -18,21 +18,22 @@ import java.util.Date;
 @NoArgsConstructor
 public class CheckInOut {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(name="day_check_in")
-    private Date dayCheckIn;
-    @Column(name="start_time")
-    private Date startTime;
-    @Column(name="end_time")
-    private Date endTime;
-    @Column(name="updated_time")
-    @UpdateTimestamp
-    private Date updatedTime;
-    @ManyToOne
-    @JoinColumn(name = "id_user")
-    private User user;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
+	@Column(name = "day_check_in")
+	private Date dayCheckIn;
+	@Column(name = "start_time")
+	private Date startTime;
+	@Column(name = "end_time")
+	private Date endTime;
+	@Column(name = "updated_time")
+	@UpdateTimestamp
+	private Date updatedTime;
+	@ManyToOne
+	@JoinColumn(name = "id_user")
+	private User user;
+	@Column(name = "total_time")
+	private int totalTime;
 
 }

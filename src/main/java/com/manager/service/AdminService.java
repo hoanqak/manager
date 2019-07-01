@@ -12,13 +12,11 @@ import java.util.List;
 @Service
 public interface AdminService {
 
-	User findUserByEmail(String email);
-
 	ResponseEntity getAllUserInPage(int pageNumber, int pageSize);
 
 	ResponseEntity createUser(User user);
 
-	ResponseEntity updateUser(User user);
+	ResponseEntity updateUserStatus(int id, UserDTO userDTO);
 
 	ResponseEntity getCheckInOutByTime(long startDate, long endDate, int pageNumber, int size);
 
@@ -27,4 +25,10 @@ public interface AdminService {
 	ResponseEntity updateCheckInOutOfUser(String userId, CheckInOutDTO checkInOutDTO);
 
 	ResponseEntity getLeaveApplicationOfUserByTime(String userId, long startDate, long endDate);
+
+	//	trả về User có Id cần tìm, chuyển toàn bộ thông tin lên form Edit của Admin
+	ResponseEntity getUserByIdToEditPage(int id);
+
+	ResponseEntity getHistoryCheckInOutByDate(long date, int pageNumber, int pageSize);
+
 }

@@ -29,10 +29,11 @@ public class UserDTO {
 	private int status;
 	private int role;
 	private int position;
+	private int department;
 	private long createdDate;
 	private long updatedDate;
 
-	public  UserDTO(User user) {
+	public UserDTO(User user) {
 		this.id = user.getId();
 		this.name = user.getName();
 		this.birthday = user.getBirthday().getTime();
