@@ -14,7 +14,8 @@ public interface CheckInOutRepository extends JpaRepository<CheckInOut, Integer>
 
     @Query(nativeQuery = true, value = "select d.day_check_in from check_in_out as d order by id desc limit 0, 1")
     public Date getDate();
-    @Query(nativeQuery = true, value = "SELECT * from check_in_out as checkInOut where checkInOut.day_check_in = :date")
-    public CheckInOut getCheckInOutByDate(@Param("date") String date);
+
+    @Query(nativeQuery = true, value = "SELECT * from check_in_out as checkInOut where checkInOut.day_check_in = :date and checkInOut.id_user=:user")
+    public CheckInOut getCheckInOutByDate(@Param("date") String date, @Param("user") int id);
 
 }

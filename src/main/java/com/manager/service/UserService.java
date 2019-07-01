@@ -12,10 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface UserService {
 
-    public ResponseEntity<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
-    public ResponseEntity<String> logOut(HttpServletRequest request, HttpServletResponse response);
+    public ResponseEntity<String> login(LoginDTO loginDTO, HttpServletRequest request);
+
+    public ResponseEntity<String> logOut(HttpServletRequest request);
+
     public ResponseEntity<String> forgotPassword(LoginDTO loginDTO, HttpServletRequest request);
+
     public ResponseEntity<User> editProfile(int id);
+
     public ResponseEntity requestADayOff(Date fromDate, Date toDate, String reason);
 
 }

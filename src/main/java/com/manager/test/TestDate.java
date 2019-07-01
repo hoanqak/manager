@@ -11,10 +11,9 @@ public class TestDate {
 
 	public static void main(String[] args) throws InterruptedException {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR_OF_DAY, 13);
-		calendar.set(Calendar.MINUTE, 30);
-		calendar.set(Calendar.SECOND, 0);
-		System.out.println(calendar.getTimeInMillis());
+		calendar.setTimeInMillis(3495834598345l);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		System.out.println(simpleDateFormat.format(calendar.getTime()));
 	}
 
 }

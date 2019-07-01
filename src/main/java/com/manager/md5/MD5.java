@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class MD5 {
 
-    public String convertToMD5(String input){
+    public String convertToMD5(String input) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("md5");
             messageDigest.update(input.getBytes());
@@ -23,5 +23,6 @@ public class MD5 {
 
     public static void main(String[] args) {
         System.out.println(new MD5().convertToMD5("123"));
+        System.out.println(new MD5().convertToMD5("123").length());
     }
 }

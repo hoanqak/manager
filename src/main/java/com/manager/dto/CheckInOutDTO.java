@@ -12,8 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckInOutDTO {
-
-    private int userId;
-    private long dateCheckIn;
+    private long timeCheck;
 
 }

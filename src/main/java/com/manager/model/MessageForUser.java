@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "message_for_user")
 @Getter
@@ -19,7 +20,7 @@ public class MessageForUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="message")
+    @Column(name = "message")
     private String message;
     @Column(name = "created_time")
     @CreationTimestamp
@@ -33,7 +34,7 @@ public class MessageForUser {
     @JoinColumn(name = "id_leave_application")
     private LeaveApplication leaveApplication;
 
-    public MessageForUser(String message , boolean status, User user, LeaveApplication leaveApplication) {
+    public MessageForUser(String message, boolean status, User user, LeaveApplication leaveApplication) {
         this.message = message;
         this.status = status;
         this.user = user;

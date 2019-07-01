@@ -11,14 +11,21 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-	@Query("SELECT u.email FROM User as u where u.email = :email")
-	public List<String> findEmail(@Param("email") String email);
-	@Query("SELECT u.password FROM User as u where u.email = :email")
-	public List<String> findPassword(@Param("email") String email);
-	@Query ("SELECT u.id FROM User as u where u.email = :email ")
-	public Integer findIdByEmail(@Param("email") String email);
-	@Query("select u from User as u where u.email = :email")
-	public User searchUserByEmail(@Param("email") String email);
-	@Query("SELECT u FROM User as u where u.email =:email and u.password =:password")
-	public User getUserByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+    @Query("SELECT u.email FROM User as u where u.email = :email")
+    public List<String> findEmail(@Param("email") String email);
+
+    @Query("SELECT u.password FROM User as u where u.email = :email")
+    public List<String> findPassword(@Param("email") String email);
+
+    @Query("SELECT u.id FROM User as u where u.email = :email ")
+    public Integer findIdByEmail(@Param("email") String email);
+
+    @Query("select u from User as u where u.email = :email")
+    public User searchUserByEmail(@Param("email") String email);
+
+    @Query("SELECT u FROM User as u where u.email =:email and u.password =:password")
+    public User getUserByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+
+    @Query("select u from User as u where u.email = :id")
+    public User getUserById(@Param("id") int id);
 }

@@ -21,15 +21,15 @@ public class CheckInOut {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="day_check_in")
+    @Column(name = "day_check_in")
     private Date dayCheckIn;
-    @Column(name="start_time")
+    @Column(name = "start_time")
     private Date startTime;
-    @Column(name="end_time")
+    @Column(name = "end_time")
     private Date endTime;
     @Column(name = "total_time")
     private double totalTime;
-    @Column(name="updated_time")
+    @Column(name = "updated_time")
     @UpdateTimestamp
     private Date updatedTime;
     @ManyToOne
