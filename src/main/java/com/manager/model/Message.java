@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table
 @Getter
@@ -19,9 +20,9 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="status")
+    @Column(name = "status")
     private boolean status;
-    @Column(name  = "created_time")
+    @Column(name = "created_time")
     @CreationTimestamp
     private Date createdTime;
     @ManyToOne

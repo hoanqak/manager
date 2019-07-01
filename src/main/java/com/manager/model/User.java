@@ -20,11 +20,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "full_name")
+    @Column(name = "fullname")
     private String name;
     @Column(name="birth_day")
     private Date birthDay;
-    @Column(name="email")
+    @Column(name="email", unique = true)
     private String email;
     @Column(name="address")
     private String address;
@@ -42,12 +42,11 @@ public class User {
     @Column(name = "updated_time")
     @UpdateTimestamp
     private Date updatedDate;
-    @ManyToOne
-    @JoinColumn(name = "id_role")
-    private Role role;
-    @ManyToOne
-    @JoinColumn(name = "id_status")
-    private Status status;
+    @Column
+    private int status;
+    private int role;
+    private int department;
+    private int position;
 
     public User(String name, Date birthDay, String email, String address, String password, String phoneNumber, String picture, String kindOfEmployee) {
         this.name = name;
