@@ -16,5 +16,6 @@ public class RequestADayOffDTO {
     private String reason;
     private int totalDayOff;
     private int remainDayOff;
+    private String status;
 
 }

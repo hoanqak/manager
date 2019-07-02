@@ -12,8 +12,7 @@ import lombok.Setter;
 public class ResetPasswordDTO {
 
     private String email;
-    private String password;
-    private String rePassword;
+    private String oldPassword;
     private String newPassword;
     private String newPassword1;
 

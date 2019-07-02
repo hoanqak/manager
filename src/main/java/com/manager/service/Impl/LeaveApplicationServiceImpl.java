@@ -28,9 +28,8 @@ public class LeaveApplicationServiceImpl {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public ResponseEntity requestADayOff(RequestADayOffDTO requestADayOffDTO, HttpServletRequest request) {
+    public ResponseEntity<RequestADayOffDTO> requestADayOff(RequestADayOffDTO requestADayOffDTO, HttpServletRequest request) {
         String codeToken = (String) request.getSession().getAttribute("token");
-
         if (codeToken == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
@@ -51,7 +50,9 @@ public class LeaveApplicationServiceImpl {
             leaveApplication.setUser(user);
 
             leaveApplicationRepository.save(leaveApplication);
-            return new ResponseEntity("REQUESTED", HttpStatus.OK);
+
+            requestADayOffDTO.setStatus("pending");
+            return new ResponseEntity(requestADayOffDTO, HttpStatus.OK);
         }
         return new ResponseEntity("ERROR_REQUEST", HttpStatus.OK);
     }
@@ -59,10 +60,12 @@ public class LeaveApplicationServiceImpl {
     public ResponseEntity<List<LeaveApplication>> listDayOff(ListADayOffDTO listADayOffDTO, HttpServletRequest request) {
         String code = (String) request.getSession().getAttribute("token");
         if (code == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
         Token token1 = tokenRepository.getTokenByCode(code);
-        List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(listADayOffDTO.getMonth(), token1.getId());
+        int idUser = token1.getId();
+        int month = listADayOffDTO.getMonth();
+        List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(month, idUser);
         return new ResponseEntity<>(leaveApplicationList, HttpStatus.OK);
     }
 }

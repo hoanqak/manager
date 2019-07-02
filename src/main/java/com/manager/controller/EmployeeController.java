@@ -3,46 +3,34 @@ package com.manager.controller;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.manager.dto.*;
+import com.manager.model.CheckInOut;
 import com.manager.model.LeaveApplication;
-import com.manager.repository.PasswordIssuingCodeRepository;
-import com.manager.service.Impl.CheckInOutImpl;
+import com.manager.service.Impl.CheckInOutServiceImpl;
 import com.manager.service.Impl.LeaveApplicationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.manager.repository.CheckInOutRepository;
-import com.manager.repository.UserRepository;
 import com.manager.service.Impl.UserServiceImpl;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
     @Autowired
-    private PasswordIssuingCodeRepository passwordIssuingCodeRepository;
-    @Autowired
     private UserServiceImpl userServiceImpl;
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CheckInOutRepository checkInOutRepository;
 
     @Autowired
     private LeaveApplicationServiceImpl leaveApplicationService;
 
     @Autowired
-    private CheckInOutImpl checkInOutImpl;
-
-    @Autowired
-    private CheckInOutRepository checkInOuRepository;
+    private CheckInOutServiceImpl checkInOutServiceImpl;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response,
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO,
                                         HttpServletRequest request) {
         return userServiceImpl.login(loginDTO, request);
     }
@@ -52,42 +40,55 @@ public class EmployeeController {
         return userServiceImpl.logOut(request);
     }
 
-    @GetMapping("profile")
+    //get profile
+    @GetMapping("/profile")
     public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
         return userServiceImpl.profile(request);
     }
 
-    @PutMapping("/updateProfile")
-    public ResponseEntity upateProfile(ProfileDTO profileDTO) {
-        return null;
+    //update profile
+    @PostMapping("/profile")
+    public ResponseEntity updateProfile(@RequestBody ProfileDTO profileDTO, HttpServletRequest request) {
+        return userServiceImpl.updateProfile(profileDTO, request);
     }
 
-    //Reset Password
+    @PostMapping("/uploadAvatar")
+    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request){
+        return userServiceImpl.uploadFile(multipartFile, request);
+    }
+
+    //Reset Password, send mail
     @PostMapping("/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         return userServiceImpl.forgotPassword(loginDTO, request);
     }
 
-    //Send Mail
-    @PutMapping("/forgotPassword/{code}/{id}")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable("code") String code, @PathVariable("id") int id) {
+    //reset password in mail when request forgot password
+    @GetMapping("/forgotPassword/{code}/{id}")
+    public ResponseEntity<String> resetPasswordInMail(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable("code") String code, @PathVariable("id") int id) {
         return userServiceImpl.resetPassword(resetPasswordDTO, code, id);
     }
 
-    //Change password
+    //Change password in profile
     @PutMapping("changePassword")
-    public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
-        return userServiceImpl.changePassword(resetPasswordDTO);
+    public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
+        return userServiceImpl.changePassword(resetPasswordDTO, request);
     }
 
     @PostMapping("/checkIn")
     public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-        return checkInOutImpl.checkIn(checkInOutDTO, request);
+        return checkInOutServiceImpl.checkIn(checkInOutDTO, request);
     }
 
-    @PostMapping("checkOut")
+    @PostMapping("/checkOut")
     public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-        return checkInOutImpl.checkOut(checkInOutDTO, request);
+        return checkInOutServiceImpl.checkOut(checkInOutDTO, request);
+    }
+
+    //get list checkInOuts
+    @GetMapping("/checkInOuts")
+    public ResponseEntity<List<CheckInOut>> checkInOuts(HttpServletRequest request){
+        return checkInOutServiceImpl.getListCheckInOut(request);
     }
 
     @PostMapping("/requestADayOff")
@@ -99,18 +100,5 @@ public class EmployeeController {
     public ResponseEntity<List<LeaveApplication>> listDayOff(@RequestBody ListADayOffDTO listADayOffDTO, HttpServletRequest request) {
         return leaveApplicationService.listDayOff(listADayOffDTO, request);
     }
-
-    @GetMapping("/test")
-    public String test(HttpServletResponse response) {
-        response.setHeader("userId", "123");
-        return "123";
-    }
-
-    @GetMapping("test-1")
-    public String get(HttpServletResponse httpServletResponse) {
-        return httpServletResponse.getHeader("userId");
-
-    }
-
 
 }
