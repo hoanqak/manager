@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import  org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-/*
 @Configuration
-*/
 public class WebConfig implements WebMvcConfigurer{
     @Autowired
     Defender defender;
@@ -18,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer{
     DefenderManager defenderManager;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String excludePath[] ={"/**/login", "/**/notLoggedIn", "/**/notAdmin", "/**/admin/**", "/**/manager/**", "**/yourNotManager"};
+        String excludePath[] ={"/**/login","/**/logout", "/**/notLoggedIn", "/**/notAdmin", "/**/admin/**", "/**/manager/**", "**/yourNotManager"};
         registry.addInterceptor(defender).addPathPatterns("/**").excludePathPatterns(excludePath);
         registry.addInterceptor(defenderAdmin).addPathPatterns("/**/admin/**").addPathPatterns("/**/admin");
         registry.addInterceptor(defenderManager).addPathPatterns("/**/manager/**");

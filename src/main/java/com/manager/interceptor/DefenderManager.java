@@ -7,8 +7,6 @@ import com.manager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 @Component
@@ -21,35 +19,19 @@ public class DefenderManager extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("Defender manager");
-        Cookie cookies[] = request.getCookies();
-        System.out.println("Cookie: " + cookies);
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                System.out.println(cookie.getName() + ": " + cookie.getValue());
-                if (cookie.getName().equals("token")) {
-                    Token token = tokenRepository.getTokenByCode(cookie.getValue());
-                    System.out.println(token.getId());
-                    if (token != null) {
-                        User user = userRepository.findById(token.getId()).get();
-                        if (user != null) {
-                            //i is role employee
-                            System.out.println(user.getEmail());
-                            if (user.getRole() == 3) {
-                                return true;
-                            } else {
-                                request.getRequestDispatcher("/v1/api/yourNotManager").include(request, response);
-                                return true;
-                            }
-                        }
-                    }
-                    break;
-                }
+        String code = request.getHeader("access_Token");
+        Token token = tokenRepository.getTokenByCode(code);
+        if(token != null){
+            User user = userRepository.getUserById(token.getId());
+            if(user != null && user.getRole() == 3){
+                return true;
             }
-
+            else{
+                response.sendRedirect("/api/v1/yourNotManager");
+                return true;
+            }
         }
-        System.out.println("null");
-        response.sendRedirect("/api/v1/notLoggedIn");
+        response.sendRedirect("api/v1/notLoggedIn");
         return true;
     }
 }

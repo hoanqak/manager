@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -28,11 +27,10 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -75,12 +73,8 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
-            if (user.getPassword().equals(md5.convertToMD5(loginDTO.getPassword()))) {
-                HttpSession session = request.getSession();
-                session.setAttribute("token", token.getToken());
-                session.setMaxInactiveInterval(60 * 60 * 24);
+            if (user.getPassword() !=  null && user.getPassword().equals(md5.convertToMD5(loginDTO.getPassword()))) {
                 return new ResponseEntity<>(token.getToken(), HttpStatus.OK);
-
             }
         }
 
@@ -168,80 +162,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> logOut(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.getAttribute("token");
-        session.invalidate();
+        String code = request.getHeader("access_Token");
+        Token token = tokenRepository.getTokenByCode(code);
+        if(token != null){
+            int random = new Random().nextInt();
+            String tokenNew = md5.convertToMD5(String.valueOf(random));
+            token.setToken(tokenNew);
+            tokenRepository.save(token);
+        }
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    // @Override
-   /* public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO) {
-        User user = userRepository.findById(checkInOutDTO.getUserId()).get();
-        System.out.println(user);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(checkInOutDTO.getDateCheckIn());
-        CheckInOut checkInOut = new CheckInOut();
-        int hourCheckIn = calendar.get(Calendar.HOUR_OF_DAY);
-        int minuteCheckIn = calendar.get(Calendar.MINUTE);
-        System.out.println("gio: " + hourCheckIn);
-        System.out.println("Phut: " + minuteCheckIn);
-
-        Date date = checkInOutRepository.getDate();
-
-        Date date1 = new Date();
-
-        if (checkInOutImpl.compareDate(date, date1)) {
-            return new ResponseEntity<>("Checked", HttpStatus.OK);
-        } else {
-            if (calendar.get(Calendar.HOUR_OF_DAY) < 8 && calendar.get(Calendar.MINUTE) < 30) {
-                return new ResponseEntity<String>("chua den gio", HttpStatus.OK);
-            } else if (hourCheckIn >= 8 && minuteCheckIn >= 30 && hourCheckIn <= 9) {
-                calendar.set(Calendar.HOUR_OF_DAY, 9);
-                calendar.set(Calendar.MINUTE, 0);
-                checkInOut.setStartTime(calendar.getTime());
-                checkInOut.setDayCheckIn(calendar.getTime());
-                checkInOut.setUser(user);
-                checkInOutRepository.save(checkInOut);
-                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-            } else if (hourCheckIn >= 9 && hourCheckIn <= 10 && minuteCheckIn <= 30) {
-                checkInOut.setDayCheckIn(calendar.getTime());
-                checkInOut.setStartTime(calendar.getTime());
-                checkInOut.setUser(user);
-
-                checkInOutRepository.save(checkInOut);
-                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-            } else if (hourCheckIn >= 10 && minuteCheckIn > 30 && hourCheckIn < 11) {
-                calendar.set(Calendar.HOUR_OF_DAY, 13);
-                calendar.set(Calendar.MINUTE, 0);
-                checkInOut.setDayCheckIn(calendar.getTime());
-                checkInOut.setStartTime(calendar.getTime());
-                checkInOut.setUser(user);
-
-                checkInOutRepository.save(checkInOut);
-                return new ResponseEntity<>("FAIL", HttpStatus.OK);
-            } else if (hourCheckIn >= 12 && (hourCheckIn <= 13 && minuteCheckIn == 0)) {
-                checkInOut.setUser(user);
-                checkInOut.setDayCheckIn(calendar.getTime());
-                calendar.set(Calendar.HOUR_OF_DAY, 13);
-                calendar.set(Calendar.MINUTE, 0);
-                checkInOut.setStartTime(calendar.getTime());
-                checkInOutRepository.save(checkInOut);
-                return new ResponseEntity<String>("CHECKIN_SUCCESS", HttpStatus.OK);
-            } else if (hourCheckIn >= 13 && (hourCheckIn <= 16 && minuteCheckIn == 0)) {
-                checkInOut.setDayCheckIn(calendar.getTime());
-                checkInOut.setStartTime(calendar.getTime());
-                checkInOut.setUser(user);
-                return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("khong tinh ", HttpStatus.OK);
-            }
-        }
-
-    }*/
-
 
     public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
-        String code = (String) request.getSession().getAttribute("token");
+        String code = request.getHeader("access_Token");
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.getUserById(token.getId());
         System.out.println(user.getPicture());
@@ -277,15 +211,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
 
-        String codeToken = (String) request.getSession().getAttribute("token");
-        if (codeToken == null) {
+        String code = request.getHeader("access_Token");
+        if (code == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
-
         if (profileDTO.getPhoneNumber().length() > 10) {
             return new ResponseEntity("LENGTH_OF_PHONE_NUMBER_10", HttpStatus.OK);
         }
-
         try {
             System.out.println(profileDTO.getPhoneNumber().length());
             long number = Integer.parseInt(profileDTO.getPhoneNumber());
@@ -293,7 +225,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity("NUMBER_FORMAT_EXCEPTION", HttpStatus.OK);
         }
 
-        Token token = tokenRepository.getTokenByCode(codeToken);
+        Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.findById(token.getId()).get();
         user.setName(profileDTO.getFullName());
         user.setPhoneNumber(profileDTO.getPhoneNumber());
@@ -310,8 +242,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
-
-        String codeToken = (String) request.getSession().getAttribute("token");
+        String codeToken = request.getHeader("access_Token");
         if (codeToken == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
@@ -333,7 +264,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public ResponseEntity uploadFile(MultipartFile multipartFile, HttpServletRequest request) {
-        String codeToken = (String) request.getSession().getAttribute("token");
+        String codeToken = request.getHeader("access_Token");
         Token token = tokenRepository.getTokenByCode(codeToken);
         int userId = token.getId();
         User user = userRepository.findById(userId).get();

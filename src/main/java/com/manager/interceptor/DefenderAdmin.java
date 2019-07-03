@@ -20,35 +20,18 @@ public class DefenderAdmin extends HandlerInterceptorAdapter {
     UserRepository userRepository;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("Defender admin");
-        Cookie cookies[] = request.getCookies();
-        System.out.println("Cookie: " + cookies);
-        if(cookies != null) {
-            for(Cookie cookie : cookies){
-                System.out.println(cookie.getName() +": " + cookie.getValue());
-                if(cookie.getName().equals("token")){
-                    Token token = tokenRepository.getTokenByCode(cookie.getValue());
-                    System.out.println(token.getId());
-                    if (token != null) {
-                        User user = userRepository.findById(token.getId()).get();
-                        if (user != null) {
-                            //i is role employee
-                            System.out.println(user.getEmail());
-                            if (user.getRole() == 0) {
-                                request.getRequestDispatcher("/v1/api/yourNotAdmin").include(request, response);
-                                return true;
-                            } else {
-                                System.out.println("la admin or manager");
-                                return true;
-                            }
-                        }
-                    }
-                    break;
-                }
+        String code = request.getHeader("access_Token");
+        Token token = tokenRepository.getTokenByCode(code);
+        if(token != null){
+            User user = userRepository.getUserById(token.getId());
+            if(user != null && user.getRole() == 0){
+                response.sendRedirect("/api/v1/yourNotAdmin");
+                return true;
             }
-
+            else{
+                return true;
+            }
         }
-        System.out.println("null");
         response.sendRedirect("/api/v1/notLoggedIn");
         return true;
     }
