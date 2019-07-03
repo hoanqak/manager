@@ -1,8 +1,6 @@
 package com.manager.service.impl;
 
-import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.UserDTO;
-import com.manager.model.CheckInOut;
 import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
@@ -15,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -79,41 +75,4 @@ public class AdminServiceImpl implements AdminService {
 		UserDTO userDTO = new UserDTO(user);
 		return new ResponseEntity(userDTO, HttpStatus.OK);
 	}
-
-	@Override
-	public ResponseEntity getHistoryCheckInOutByDate(long date, int pageNumber, int pageSize) {
-		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		Date date1 = new Date(date);
-		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckIn(pageable, date1);
-
-		List<CheckInOut> checkInOuts = page.getContent();
-		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
-		for (CheckInOut checkInOut : checkInOuts) {
-			checkInOutDTOS.add(new CheckInOutDTO(checkInOut));
-		}
-		return ResponseEntity.ok(checkInOutDTOS);
-	}
-
-
-	@Override
-	public ResponseEntity getCheckInOutByTime(long startDate, long endDate, int pageNumber, int size) {
-		return null;
-	}
-
-	@Override
-	public ResponseEntity getCheckInOutOfUserByTime(String userId, long startDate, long endDate) {
-		return null;
-	}
-
-	@Override
-	public ResponseEntity updateCheckInOutOfUser(String userId, CheckInOutDTO checkInOutDTO) {
-		return null;
-	}
-
-	@Override
-	public ResponseEntity getLeaveApplicationOfUserByTime(String userId, long startDate, long endDate) {
-		return null;
-	}
-
-
 }

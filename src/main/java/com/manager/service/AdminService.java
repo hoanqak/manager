@@ -18,17 +18,8 @@ public interface AdminService {
 
 	ResponseEntity updateUserStatus(int id, UserDTO userDTO);
 
-	ResponseEntity getCheckInOutByTime(long startDate, long endDate, int pageNumber, int size);
-
-	ResponseEntity getCheckInOutOfUserByTime(String userId, long startDate, long endDate);
-
-	ResponseEntity updateCheckInOutOfUser(String userId, CheckInOutDTO checkInOutDTO);
-
-	ResponseEntity getLeaveApplicationOfUserByTime(String userId, long startDate, long endDate);
-
 	//	trả về User có Id cần tìm, chuyển toàn bộ thông tin lên form Edit của Admin
 	ResponseEntity getUserByIdToEditPage(int id);
 
-	ResponseEntity getHistoryCheckInOutByDate(long date, int pageNumber, int pageSize);
 
 }
