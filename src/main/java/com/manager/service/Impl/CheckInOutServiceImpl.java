@@ -10,6 +10,7 @@ import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
+import com.manager.service.CheckInOutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Service
-public class CheckInOutImpl {
+public class CheckInOutServiceImpl implements CheckInOutService {
 
     @Autowired
     private UserRepository userRepository;
@@ -44,12 +46,12 @@ public class CheckInOutImpl {
 
     }
 
+    @Override
     public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-
-        String code = (String) request.getSession().getAttribute("token");
+        String code = request.getHeader("access_Token");
         if (code != null) {
             Token token = tokenRepository.getTokenByCode(code);
-            User user = userRepository.findById(token.getId()).get();
+            User user = userRepository.getUserById(token.getId());
             System.out.println(user);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(checkInOutDTO.getTimeCheck());
@@ -59,15 +61,15 @@ public class CheckInOutImpl {
             System.out.println("gio: " + hourCheckIn);
             System.out.println("Phut: " + minuteCheckIn);
 
-            Date date = checkInOutRepository.getDate();
+            Date date = checkInOutRepository.getDate(user.getId());
 
-            Date date1 = new Date();
+            Date dateNow = new Date();
 
-            if (compareDate(date, date1)) {
-                return new ResponseEntity<>("Checked", HttpStatus.OK);
+            if (compareDate(date, dateNow)) {
+                return new ResponseEntity<>("CHECKED", HttpStatus.OK);
             } else {
-                if (calendar.get(Calendar.HOUR_OF_DAY) < 8 && calendar.get(Calendar.MINUTE) < 30) {
-                    return new ResponseEntity<>("FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                if ((hourCheckIn == 8 && minuteCheckIn < 30) || (hourCheckIn < 8 && minuteCheckIn < 59)) {
+                    return new ResponseEntity<>("CHECKIN_FAILED_BEFORE_8h30", HttpStatus.OK);
                 } else if (hourCheckIn >= 8 && minuteCheckIn >= 30 && hourCheckIn <= 9) {
                     calendar.set(Calendar.HOUR_OF_DAY, 9);
                     calendar.set(Calendar.MINUTE, 0);
@@ -75,14 +77,14 @@ public class CheckInOutImpl {
                     checkInOut.setDayCheckIn(calendar.getTime());
                     checkInOut.setUser(user);
                     checkInOutRepository.save(checkInOut);
-                    return new ResponseEntity<>("CHECKIN_SUCCESS" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
                 } else if (hourCheckIn >= 9 && hourCheckIn <= 10 && minuteCheckIn <= 30) {
                     checkInOut.setDayCheckIn(calendar.getTime());
                     checkInOut.setStartTime(calendar.getTime());
                     checkInOut.setUser(user);
 
                     checkInOutRepository.save(checkInOut);
-                    return new ResponseEntity<>("CHECKIN_SUCCESS" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
                 } else if (hourCheckIn >= 10 && minuteCheckIn > 30 && hourCheckIn < 11) {
                     calendar.set(Calendar.HOUR_OF_DAY, 13);
                     calendar.set(Calendar.MINUTE, 0);
@@ -90,7 +92,8 @@ public class CheckInOutImpl {
                     checkInOut.setStartTime(calendar.getTime());
                     checkInOut.setUser(user);
                     checkInOutRepository.save(checkInOut);
-                    return new ResponseEntity<>("FAILED_HOURS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                  //  return new ResponseEntity<>("CHECKIN_FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<>("CHECKIN_FAILED_AFTER_10h30", HttpStatus.OK);
                 } else if (hourCheckIn == 12 && minuteCheckIn <= 59) {
                     checkInOut.setUser(user);
                     checkInOut.setDayCheckIn(calendar.getTime());
@@ -98,18 +101,23 @@ public class CheckInOutImpl {
                     calendar.set(Calendar.MINUTE, 0);
                     checkInOut.setStartTime(calendar.getTime());
                     checkInOutRepository.save(checkInOut);
-                    return new ResponseEntity<String>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    //return new ResponseEntity<String>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<String>("CHECKIN_SUCCESS", HttpStatus.OK);
                 } else if (hourCheckIn >= 13 && hourCheckIn <= 16) {
                     if (hourCheckIn == 16 && minuteCheckIn > 1) {
-                        return new ResponseEntity<>("CHECKIN_FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                        //return new ResponseEntity<>("CHECKIN_FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                        return new ResponseEntity<>("CHECKIN_FAILED_AFTER_16h", HttpStatus.OK);
                     }
                     checkInOut.setDayCheckIn(calendar.getTime());
                     checkInOut.setStartTime(calendar.getTime());
                     checkInOut.setUser(user);
                     checkInOutRepository.save(checkInOut);
-                    return new ResponseEntity<>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    //return new ResponseEntity<>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+
                 } else {
-                    return new ResponseEntity<>("FAILED_OTHER" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                   // return new ResponseEntity<>("TIMEOUT" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
+                    return new ResponseEntity<>("TIMEOUT", HttpStatus.OK);
                 }
             }
         }
@@ -117,8 +125,9 @@ public class CheckInOutImpl {
 
     }
 
+    @Override
     public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-        String codeToken = (String) request.getSession().getAttribute("token");
+        String codeToken = request.getHeader("access_Token");
         if (codeToken == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
@@ -127,7 +136,8 @@ public class CheckInOutImpl {
         Calendar dateNow = Calendar.getInstance();
         String dateSearch = simpleDateFormat.format(dateNow.getTime());
         int totalMillis = 0;
-        //search to day
+        //search today\
+        //tim ngay checkin moi nhat
         CheckInOut checkInOut = checkInOutRepository.getCheckInOutByDate(dateSearch, token.getId());
         if (checkInOut != null) {
             Calendar calendar = Calendar.getInstance();
@@ -147,7 +157,9 @@ public class CheckInOutImpl {
             System.out.print(calendar.get(Calendar.SECOND) + "s");*/
             long timeCheckIn = checkInOut.getStartTime().getTime();
             long timeCheckOut = calendar.getTimeInMillis();
+
 /*
+
             System.out.println("Last time: " + timeCheckOut);
 */
             totalMillis += (int) (timeCheckOut - timeCheckIn) / 1000;
@@ -159,18 +171,29 @@ public class CheckInOutImpl {
             int s = totalMillis % 3600 % 60;
             System.out.println("h: " + h +" m: " + m + " s: " + s);
 */
+            if(timeCheckOut < timeCheckIn){
+                totalTime = 0;
+            }
             checkInOut.setEndTime(calendar.getTime());
             checkInOut.setTotalTime(totalTime);
 
             checkInOutRepository.save(checkInOut);
 
-            return new ResponseEntity("SUCCESS", HttpStatus.OK);
+            return new ResponseEntity("CHECKOUT_SUCCESS", HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>("PLEASE_CHECKIN", HttpStatus.OK);
         }
 
 
+    }
+    @Override
+    public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request){
+        String code = request.getHeader("access_Token");
+         Token token = tokenRepository.getTokenByCode(code);
+         int userId = token.getId();
+         List<CheckInOut> checkInOutList = checkInOutRepository.getListCheckInOutByIdUser(userId);
+        return new ResponseEntity<List<CheckInOut>>(checkInOutList, HttpStatus.OK);
     }
 
 

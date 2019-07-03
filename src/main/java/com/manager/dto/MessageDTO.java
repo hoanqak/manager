@@ -9,13 +9,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestADayOffDTO {
+public class MessageDTO {
 
-    private long fromDate;
-    private long toDate;
+    private int id;
+    private long createdDate;
+    private String message;
+    private int idApplication;
     private String reason;
-    private int totalDayOff;
-    private int remainDayOff;
     private String status;
+    private long startDate;
+    private long endDate;
+    private String name;
+
 
 }

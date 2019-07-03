@@ -1,11 +1,11 @@
 package com.manager.service;
 
-import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.LoginDTO;
+import com.manager.dto.ProfileDTO;
+import com.manager.dto.ResetPasswordDTO;
 import com.manager.model.User;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Date;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +18,13 @@ public interface UserService {
 
     public ResponseEntity<String> forgotPassword(LoginDTO loginDTO, HttpServletRequest request);
 
-    public ResponseEntity<User> editProfile(int id);
+    public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request);
 
-    public ResponseEntity requestADayOff(Date fromDate, Date toDate, String reason);
+    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, HttpServletRequest request);
 
+    public ResponseEntity uploadFile(MultipartFile multipartFile, HttpServletRequest request);
+
+    public ResponseEntity<ProfileDTO> profile(HttpServletRequest request);
+
+    public ResponseEntity<String> resetPassword(ResetPasswordDTO resetPasswordDTO, String code, int id);
 }

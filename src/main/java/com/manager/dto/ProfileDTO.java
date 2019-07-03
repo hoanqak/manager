@@ -12,7 +12,6 @@ import lombok.Setter;
 public class ProfileDTO {
 
     private String avatar;
-    private int id;
     private String fullName;
     private long dateOfBirth;
     private String position;

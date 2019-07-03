@@ -4,18 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestADayOffDTO {
+public class LeaveApplicationDTO {
 
+    private String name;
+    private String position;
     private long fromDate;
     private long toDate;
     private String reason;
-    private int totalDayOff;
-    private int remainDayOff;
-    private String status;
+    private boolean status;
 
 }
