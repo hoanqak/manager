@@ -151,18 +151,6 @@ public class EmployeeController {
         if (status >= 1) {
             List<Message> messageList = messageRepository.getListMessageByStatus(true);
             for (Message message : messageList) {
-                /*MessageDTO messageDTO = new MessageDTO();
-                messageDTO.setId(message.getId());
-                messageDTO.setMessage(message.getMessage());
-                messageDTO.setReason(message.getLeaveApplication().getReason());
-                messageDTO.setStatus(message.getMessage());
-                long startDate = message.getLeaveApplication().getStartTime().getTime();
-                long endDate = message.getLeaveApplication().getEndTime().getTime();
-                long createdDate = message.getCreatedTime().getTime();
-                messageDTO.setCreatedDate(createdDate);
-                messageDTO.setStartDate(startDate);
-                messageDTO.setEndDate(endDate);
-                messageDTO.setIdApplication(message.getLeaveApplication().getId());*/
                 MessageDTO messageDTO = convertMessageDTO(message);
                 messageDTOList.add(messageDTO);
             }
