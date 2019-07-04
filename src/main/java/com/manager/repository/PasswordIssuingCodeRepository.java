@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PasswordIssuingCodeRepository extends JpaRepository<PasswordIssuingCode, Integer> {
-    @Query("SELECT pass from PasswordIssuingCode as pass where id = :id")
-    public PasswordIssuingCode getPasswordIssuingCodeById(@Param("id") int id);
+	@Query("SELECT pass from PasswordIssuingCode as pass where id = :id")
+	PasswordIssuingCode getPasswordIssuingCodeById(@Param("id") int id);
 }

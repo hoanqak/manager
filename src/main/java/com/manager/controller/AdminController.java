@@ -43,16 +43,16 @@ public class AdminController {
 	                                                      @RequestParam("pageSize") int pageSize) {
 		return checkInOutService.pageGetAllCheckInsAllUserByDate(date, pageNumber, pageSize);
 	}
+
 	@GetMapping("/users/checkInOuts/user/")
 	public ResponseEntity pageGetAllCheckinOfUser(@RequestParam("startDate") long startDate, @RequestParam("endDate") long endDate,
 	                                              @RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize,
-                                                  @RequestParam("idUser") int idUser){
+	                                              @RequestParam("idUser") int idUser) {
 		return checkInOutService.getAllCheckInsOfUser(startDate, endDate, idUser, pageNumber, pageSize);
 	}
+
 	@GetMapping("/checkInOuts/")
-	public ResponseEntity getACheckInById(@RequestParam("id") int id){
+	public ResponseEntity getACheckInById(@RequestParam("id") int id) {
 		return checkInOutService.getACheckInById(id);
 	}
-
-
 }

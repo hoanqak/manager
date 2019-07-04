@@ -2,9 +2,8 @@ package com.manager.controller;
 
 import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.MessageDemoDTO;
-import com.manager.model.LeaveApplication;
 import com.manager.service.Impl.LeaveApplicationServiceImpl;
-import com.manager.service.Impl.MessageImpl;
+import com.manager.service.Impl.MessageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,28 +19,29 @@ import java.util.List;
 public class ManagerController {
 
 
-    @Autowired
-    private MessageImpl message;
-    @Autowired
-    private LeaveApplicationServiceImpl leaveApplicationService;
+	@Autowired
+	private MessageServiceImpl message;
+	@Autowired
+	private LeaveApplicationServiceImpl leaveApplicationService;
 
-    @GetMapping("/messageUnread")
-    public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request){
-        return message.getAllMessageUnread(request);
-    }
+	@GetMapping("/messageUnread")
+	public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request) {
+		return message.getAllMessageUnread(request);
+	}
 
-    @PostMapping("/readAll")
-    public ResponseEntity readMessage(HttpServletRequest request){
-        return message.readAll(request);
-    }
-    @PostMapping("/process")
-    public ResponseEntity processLeaveApplication(){
-        return null;
-    }
+	@PostMapping("/readAll")
+	public ResponseEntity readMessage(HttpServletRequest request) {
+		return message.readAll(request);
+	}
 
-    @GetMapping("/leaveApplications")
-    public ResponseEntity<List<LeaveApplicationDTO>> getAllListLeaveApplication(){
-        return leaveApplicationService.getListApplicationDTO();
-    }
+	@PostMapping("/process")
+	public ResponseEntity processLeaveApplication() {
+		return null;
+	}
+
+	@GetMapping("/leaveApplications")
+	public ResponseEntity<List<LeaveApplicationDTO>> getAllListLeaveApplication() {
+		return leaveApplicationService.getListApplicationDTO();
+	}
 
 }

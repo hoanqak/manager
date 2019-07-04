@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Integer> {
-    @Query("select t from Token as t where t.id =:id")
-    public Token getTokenById(@Param("id") int id);
+	@Query("select t from Token as t where t.id =:id")
+	Token getTokenById(@Param("id") int id);
 
-    @Query("select t from Token as t where t.token=:code")
-    public Token getTokenByCode(@Param("code") String code);
+	@Query("select t from Token as t where t.token=:code")
+	Token getTokenByCode(@Param("code") String code);
 }

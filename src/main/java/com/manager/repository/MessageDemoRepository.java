@@ -9,7 +9,9 @@ import java.util.List;
 
 @Repository
 public interface MessageDemoRepository extends JpaRepository<MessageDemo, Integer> {
-    MessageDemo getMessageDemoById(int id);
-    List<MessageDemo> getAllMessageByStatus(boolean status);
-    List<MessageDemo> getAllMessageByStatusAndTo(boolean status, User user);
+	MessageDemo getMessageDemoById(int id);
+
+	List<MessageDemo> getAllMessageByStatus(boolean status);
+
+	List<MessageDemo> getAllMessageByStatusAndTo(boolean status, User user);
 }

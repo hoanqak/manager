@@ -11,11 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestADayOffDTO {
 
-    private long fromDate;
-    private long toDate;
-    private String reason;
-    private int totalDayOff;
-    private int remainDayOff;
-    private String status;
+	private long fromDate;
+	private long toDate;
+	private String reason;
+	private int totalDayOff;
+	private int remainDayOff;
+	private String status;
 
 }

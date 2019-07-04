@@ -12,12 +12,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestMessageDTO {
 
-    private String message;
-    private int type;
-    private String content;
-    private User from;
-    private User to;
-    private long timeRequest;
-    private int leaveApplication;
+	private String message;
+	private int type;
+	private String content;
+	private User from;
+	private User to;
+	private long timeRequest;
+	private int leaveApplication;
 
 }

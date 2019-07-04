@@ -11,15 +11,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MessageDTO {
 
-    private int id;
-    private long createdDate;
-    private String message;
-    private int idApplication;
-    private String reason;
-    private String status;
-    private long startDate;
-    private long endDate;
-    private String name;
+	private int id;
+	private long createdDate;
+	private String message;
+	private int idApplication;
+	private String reason;
+	private String status;
+	private long startDate;
+	private long endDate;
+	private String name;
 
 
 }

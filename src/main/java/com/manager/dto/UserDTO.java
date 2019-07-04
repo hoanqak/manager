@@ -39,8 +39,8 @@ public class UserDTO {
 	public UserDTO(User user) {
 		this.id = user.getId();
 		this.name = user.getName();
-		this.birthday = user.getBirthday().getTime();
-		this.phone = user.getPhone();
+		this.birthday = user.getBirthDay().getTime();
+		this.phone = user.getPhoneNumber();
 		this.email = user.getEmail();
 		this.status = user.getStatus();
 		this.role = user.getRole();

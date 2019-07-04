@@ -8,9 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CheckInOutService {
-    public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
-    public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
-    public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request);
+	ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
+
+	ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
+
+	ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request);
 
 	ResponseEntity pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize);
 

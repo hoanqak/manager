@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "password_issuing_code")
 public class PasswordIssuingCode {
 

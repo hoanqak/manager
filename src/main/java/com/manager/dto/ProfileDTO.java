@@ -11,13 +11,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProfileDTO {
 
-    private String avatar;
-    private String fullName;
-    private long dateOfBirth;
-    private String position;
-    private String phoneNumber;
-    private String email;
-    private long startDate;
+	private String avatar;
+	private String fullName;
+	private long dateOfBirth;
+	private String position;
+	private String phoneNumber;
+	private String email;
+	private long startDate;
 
 
 }
