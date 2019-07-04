@@ -15,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 @Service
+@Transactional
 public class MessageServiceImpl implements MessageService {
 
 	@Autowired
@@ -34,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
 		return user;
 	}
 
-	public RequestMessageDTO requestMessageDTO(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
+	public RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
 		User user = getUser(request);
 		if (requestMessageDTO.getType() == 0) {
 			MessageDemo messageDemo = new MessageDemo();
@@ -42,7 +44,7 @@ public class MessageServiceImpl implements MessageService {
 			messageDemo.setContent(requestMessageDTO.getContent());
 			messageDemo.setFrom(user);
 			messageDemo.setType(0);
-			messageDemo.setIdReport(requestMessageDTO.getIdReport());
+			messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
 			userRepository.getRoleUser(2).forEach(user1 ->{
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
@@ -53,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
 			messageDemo.setContent(requestMessageDTO.getContent());
 			messageDemo.setFrom(user);
 			messageDemo.setType(0);
-			messageDemo.setIdReport(requestMessageDTO.getIdReport());
+			messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
 			for (User user1 : userRepository.getRoleUser(2)) {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
@@ -97,7 +99,6 @@ public class MessageServiceImpl implements MessageService {
 		User user = getUser(request);
 		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndTo(false, user)) {
 			messageDemo.setStatus(true);
-			messageDemoRepository.save(messageDemo);
 		}
 		return new ResponseEntity(true, HttpStatus.OK);
 	}
