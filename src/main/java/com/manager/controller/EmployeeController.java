@@ -104,12 +104,6 @@ public class EmployeeController {
 		return leaveApplicationService.listDayOff(listADayOffDTO, request);
 	}
 
-	@GetMapping("test-token")
-	public String s(HttpServletRequest request) {
-		System.out.println(request.getHeader("access_Token"));
-		return request.getHeader("access_Token");
-	}
-
 	@Autowired
 	TokenRepository tokenRepository;
 	@Autowired
@@ -164,7 +158,9 @@ public class EmployeeController {
 	public MessageDTO convertMessageDTO(Message message) {
 		MessageDTO messageDTO = new MessageDTO();
 		messageDTO.setId(message.getId());
+/*
 		messageDTO.setMessage(message.getMessage());
+*/
 		messageDTO.setReason(message.getLeaveApplication().getReason());
 		messageDTO.setStatus(message.getLeaveApplication().getStatus());
 		long startDate = message.getLeaveApplication().getStartTime().getTime();
@@ -223,6 +219,12 @@ public class EmployeeController {
 	@PostMapping("/admin/readAll")
 	public ResponseEntity readAll(HttpServletRequest request) {
 		return message.readAll(request);
+	}
+
+
+	@GetMapping("/admin/viewRequest")
+	public ResponseEntity<Object> viewMessage(@RequestBody RequestMessageDTO requestMessageDTO){
+		return leaveApplicationService.viewMessage(requestMessageDTO);
 	}
 
 }

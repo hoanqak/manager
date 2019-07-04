@@ -7,7 +7,9 @@ import com.manager.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,15 +18,19 @@ import javax.validation.constraints.Size;
 @Setter
 @NotNull
 @NoArgsConstructor
+@AllArgsConstructor
+@Valid
 public class UserDTO {
 
 	private int id;
 	private String name;
 	private long birthday;
+	@Size(max = 15, min = 8)
 	private String password;
-	@Size(min = 8, max = 15)
+	@Length(max = 10, min = 10)
 	private String phone;
 	@Email
+	@NotNull
 	private String email;
 	private String address;
 	private String picture;

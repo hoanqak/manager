@@ -1,4 +1,4 @@
-package com.manager.service.impl;
+package com.manager.service.Impl;
 
 import com.manager.dto.UserDTO;
 import com.manager.model.User;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 @Service
 public class AdminServiceImpl implements AdminService {

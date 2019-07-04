@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
-
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -37,34 +36,25 @@ public class MessageServiceImpl implements MessageService {
 
 	public RequestMessageDTO requestMessageDTO(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
 		User user = getUser(request);
-		if (requestMessageDTO.getType() == 1) {
+		if (requestMessageDTO.getType() == 0) {
 			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setMessage("ID: " + "(" + user.getName() + ")" + " Request edit checkin time");
+			messageDemo.setTitle("ID: " + "(" + user.getName() + ")" + " Request edit checkin time");
 			messageDemo.setContent(requestMessageDTO.getContent());
 			messageDemo.setFrom(user);
-			messageDemo.setType("EDIT_CHECKOUT");
-			for (User user1 : userRepository.getRoleUser(2)) {
+			messageDemo.setType(0);
+			messageDemo.setIdReport(requestMessageDTO.getIdReport());
+			userRepository.getRoleUser(2).forEach(user1 ->{
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
-			}
-		} else if (requestMessageDTO.getType() == 2) {
+			});
+		} else if (requestMessageDTO.getType() == 1) {
 			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setMessage("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
+			messageDemo.setTitle("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
 			messageDemo.setContent(requestMessageDTO.getContent());
 			messageDemo.setFrom(user);
-			messageDemo.setType("EDIT_CHECKOUT");
+			messageDemo.setType(0);
+			messageDemo.setIdReport(requestMessageDTO.getIdReport());
 			for (User user1 : userRepository.getRoleUser(2)) {
-				messageDemo.setTo(user1);
-				messageDemoRepository.save(messageDemo);
-			}
-		} else if (requestMessageDTO.getType() == 0) {
-			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setMessage("ID: " + user.getId() + "(" + user.getName() + ")" + " Request a day off");
-			messageDemo.setFrom(user);
-			messageDemo.setContent(requestMessageDTO.getContent());
-			messageDemo.setType("LEAVE_APPLICATION");
-			messageDemo.setIdLeaveApplication(requestMessageDTO.getLeaveApplication());
-			for (User user1 : userRepository.getRoleUser(3)) {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
 			}
@@ -86,13 +76,19 @@ public class MessageServiceImpl implements MessageService {
 	public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
 		MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
 		messageDemoDTO.setContent(messageDemo.getContent());
-		messageDemoDTO.setMessage(messageDemo.getMessage());
+		messageDemoDTO.setMessage(messageDemo.getTitle());
 		messageDemoDTO.setTo(messageDemo.getTo().getName());
 		messageDemoDTO.setFrom(messageDemo.getFrom().getName());
-		messageDemoDTO.setType(messageDemo.getType());
+		if(messageDemo.getType() == 0){
+			messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
+		}else if(messageDemo.getType() == 1){
+			messageDemoDTO.setType("REQUEST_A_DAY_OFF");
+		}else if(messageDemo.getType() == -1){
+			messageDemoDTO.setType("REQUEST_EDIT_CHECKOUT");
+		}
 		messageDemoDTO.setId(messageDemo.getId());
-		long time = messageDemo.getCreatedTime().getTime();
-		messageDemoDTO.setCreatedTime(time);
+		long time = messageDemo.getTimeRequest().getTime();
+		messageDemoDTO.setTimeRequest(time);
 
 		return messageDemoDTO;
 	}

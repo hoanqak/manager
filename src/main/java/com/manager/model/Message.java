@@ -24,8 +24,8 @@ public class Message {
     @Column(name = "created_time")
     @CreationTimestamp
     private Date createdTime;
-    @Column
-    private String message;
+/*    @Column
+    private String message;*/
     @ManyToOne
     @JoinColumn(name = "id_leave_application")
     private LeaveApplication leaveApplication;

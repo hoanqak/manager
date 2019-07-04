@@ -3,10 +3,11 @@ package com.manager.service;
 import com.manager.dto.CheckInOutDTO;
 import com.manager.model.CheckInOut;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
+@Service
 public interface CheckInOutService {
 	ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
 

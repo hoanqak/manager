@@ -1,5 +1,7 @@
 package com.manager.test;
 
+import com.manager.md5.MD5;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,10 +12,7 @@ import java.util.Locale;
 public class TestDate {
 
 	public static void main(String[] args) throws InterruptedException {
-		Calendar calendar = Calendar.getInstance();
-		System.out.println(calendar.getTimeInMillis());
-		calendar.set(Calendar.DAY_OF_MONTH, 5);
-		System.out.println(calendar.getTimeInMillis());
+		System.out.println(new MD5().convertToMD5("12345678"));
 	}
 
 }

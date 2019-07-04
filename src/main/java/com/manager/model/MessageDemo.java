@@ -22,11 +22,9 @@ public class MessageDemo {
     private int id;
     @Column
     private boolean status;
-    private String message;
-    private String type;
-    @CreationTimestamp
-    @Column(name = "created_time")
-    private Date createdTime;
+    @Column(name="title")
+    private String title;
+    private int type;
     @Column
     private String content;
     @CreationTimestamp
@@ -35,14 +33,14 @@ public class MessageDemo {
     @ManyToOne
     @JoinColumn(name = "send_from")
     private User from;
-    @Column(name = "id_leave_application")
-    private int idLeaveApplication;
+    @Column(name = "id_report")
+    private int idReport;
     @ManyToOne
     @JoinColumn(name = "send_to")
     private User to;
 
-    public MessageDemo(String message, String type, String content, User from, User to) {
-        this.message = message;
+    public MessageDemo(String title, int type, String content, User from, User to) {
+        this.title = title;
         this.type = type;
         this.content = content;
         this.from = from;

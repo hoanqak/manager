@@ -14,7 +14,7 @@ public class MessageDemoDTO {
 	private boolean status;
 	private String message;
 	private String type;
-	private long createdTime;
+	private long timeRequest;
 	private String content;
 	private String from;
 	private String to;

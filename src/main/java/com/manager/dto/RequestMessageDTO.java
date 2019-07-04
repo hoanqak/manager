@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestMessageDTO {
 
+	private int idReport;
 	private String message;
 	private int type;
 	private String content;

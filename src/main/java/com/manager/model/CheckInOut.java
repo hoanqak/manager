@@ -36,5 +36,4 @@ public class CheckInOut {
     @JoinColumn(name = "id_user")
     private User user;
 
-
 }
