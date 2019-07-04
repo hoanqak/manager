@@ -1,6 +1,7 @@
 package com.manager.model;
 
 import com.manager.dto.UserDTO;
+import com.manager.md5.MD5;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +53,9 @@ public class User {
     //	khởi tạo User từ UserDTO
     public static User adminCreateUser(UserDTO userDTO) {
         User user = new User();
-
+	    MD5 md5 = new MD5();
+	    String passwordDefault = md5.convertToMD5(String.valueOf(12345678));
+	    user.setPassword(passwordDefault);
         user.setName(userDTO.getName());
         user.setBirthDay(new Date(userDTO.getBirthday()));
         user.setPosition(userDTO.getPosition());
