@@ -27,7 +27,7 @@ public class UserDTO {
 	private long birthday;
 	@Size(max = 15, min = 8)
 	private String password;
-	@Length(max = 10, min = 10)
+	@Length(max = 13, min = 8)
 	private String phone;
 	@Email
 	@NotNull

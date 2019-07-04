@@ -13,7 +13,7 @@ import java.util.List;
 public interface MessageService {
 	User getUser(HttpServletRequest request);
 
-	RequestMessageDTO requestMessageDTO(RequestMessageDTO requestMessageDTO, HttpServletRequest request);
+	RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request);
 
 	ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request);
 

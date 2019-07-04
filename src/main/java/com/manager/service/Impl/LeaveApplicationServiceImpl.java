@@ -103,7 +103,10 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     public ResponseEntity<Object> viewMessage(RequestMessageDTO requestMessageDTO) {
         System.out.println("Type: " + requestMessageDTO.getType());
         if (requestMessageDTO.getType() == 1) {
-            LeaveApplication leaveApplication = leaveApplicationRepository.findById(requestMessageDTO.getIdReport()).get();
+            LeaveApplication leaveApplication = leaveApplicationRepository.findById(requestMessageDTO.getIdCheckInOut()).get();
+            if(leaveApplication == null){
+                return new ResponseEntity<>("MESSAGE_NOT_EXITS", HttpStatus.NOT_FOUND);
+            }
             LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
             leaveApplicationDTO.setName(leaveApplication.getUser().getName());
             leaveApplicationDTO.setReason(leaveApplication.getReason());
@@ -112,7 +115,10 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             System.out.println(leaveApplication.getReason());
             return new ResponseEntity<Object>(leaveApplicationDTO, HttpStatus.OK);
         } else if (requestMessageDTO.getType() == 0) {
-            CheckInOut checkInOut = checkInOutRepository.getOne(requestMessageDTO.getIdReport());
+            CheckInOut checkInOut = checkInOutRepository.getOne(requestMessageDTO.getIdCheckInOut());
+            if(checkInOut == null){
+                return new ResponseEntity<>("MESSAGE_NOT_EXITS", HttpStatus.NOT_FOUND);
+            }
             System.out.println(checkInOut.getStartTime());
             CheckInOutDTO checkInOutDTO = new CheckInOutDTO();
             checkInOutDTO.setCheckin(checkInOut.getStartTime().getTime());
