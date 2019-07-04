@@ -7,9 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ManagerITLeadPro" />
+        <module name="manager" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="manager" target="8" />
       <module name="ManagerITLeadPro" target="8" />
     </bytecodeTargetLevel>
   </component>

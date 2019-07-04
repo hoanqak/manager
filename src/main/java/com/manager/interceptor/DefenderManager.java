@@ -23,7 +23,7 @@ public class DefenderManager extends HandlerInterceptorAdapter {
         Token token = tokenRepository.getTokenByCode(code);
         if(token != null){
             User user = userRepository.getUserById(token.getId());
-            if(user != null && user.getRole() == 3){
+            if(user != null && user.getRole() == 2){
                 return true;
             }
             else{

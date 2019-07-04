@@ -168,7 +168,9 @@ public class UserServiceImpl implements UserService {
             int random = new Random().nextInt();
             String tokenNew = md5.convertToMD5(String.valueOf(random));
             token.setToken(tokenNew);
-            tokenRepository.save(token);
+            token = tokenRepository.save(token);
+            System.out.println(token.getToken());
+            System.out.println(tokenNew);
         }
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
