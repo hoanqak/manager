@@ -27,7 +27,8 @@ public class CheckInOutDTO {
 		this.name = checkInOut.getUser().getName();
 		this.checkin = checkInOut.getStartTime().getTime();
 		this.checkout = checkInOut.getEndTime().getTime();
-		this.total = checkInOut.getTotalTime();
+		this.total = (int) checkInOut.getTotalTime();
 		this.position = checkInOut.getUser().getPosition();
 
 	}
+}

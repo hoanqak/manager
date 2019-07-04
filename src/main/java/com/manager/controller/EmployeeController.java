@@ -14,7 +14,7 @@ import com.manager.repository.UserRepository;
 import com.manager.service.Impl.CheckInOutServiceImpl;
 import com.manager.service.Impl.LeaveApplicationServiceImpl;
 import com.manager.service.Impl.MessageImpl;
-import jdk.nashorn.internal.objects.annotations.Getter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

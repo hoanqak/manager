@@ -1,5 +1,6 @@
 package com.manager.model;
 
+import com.manager.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,17 +48,15 @@ public class User {
     private int role;
     private int department;
     private int position;
-    @Column(name = "department")
-    private int department;
 
     //	khởi tạo User từ UserDTO
     public static User adminCreateUser(UserDTO userDTO) {
         User user = new User();
 
         user.setName(userDTO.getName());
-        user.setBirthday(new Date(userDTO.getBirthday()));
+        user.setBirthDay(new Date(userDTO.getBirthday()));
         user.setPosition(userDTO.getPosition());
-        user.setPhone(userDTO.getPhone());
+        user.setPhoneNumber(userDTO.getPhone());
         user.setEmail(userDTO.getEmail());
         user.setRole(userDTO.getRole());
 
