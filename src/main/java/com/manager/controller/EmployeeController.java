@@ -206,9 +206,9 @@ public class EmployeeController {
 	@Autowired
 	MessageServiceImpl message;
 
-	@GetMapping("/sendMessage")
-	public RequestMessageDTO send(@RequestBody RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
-		return message.requestMessageDTO(requestMessageDTO, request);
+	@GetMapping("/requestEditCheckInOut")
+	public RequestMessageDTO requestEditCheckInOut(@RequestBody RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
+		return message.requestEditCheckInOut(requestMessageDTO, request);
 	}
 
 	@GetMapping("/admin/messageUnread")
