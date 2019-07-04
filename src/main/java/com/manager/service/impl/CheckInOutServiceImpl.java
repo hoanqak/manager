@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,21 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
+
+	@Override
+	public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return null;
+	}
+
+	@Override
+	public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request) {
+		return null;
+	}
 
 	@SuppressWarnings("Duplicates")
 	@Override
