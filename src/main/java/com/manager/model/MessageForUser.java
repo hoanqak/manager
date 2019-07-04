@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
-
 @Entity
 @Table(name = "message_for_user")
 @Getter

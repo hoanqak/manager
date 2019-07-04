@@ -11,4 +11,10 @@ public interface CheckInOutService {
     public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
     public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
     public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request);
+
+	ResponseEntity pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize);
+
+	ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize);
+
+	ResponseEntity getACheckInById(int id);
 }

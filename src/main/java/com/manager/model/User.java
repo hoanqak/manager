@@ -47,15 +47,20 @@ public class User {
     private int role;
     private int department;
     private int position;
+    @Column(name = "department")
+    private int department;
 
-    public User(String name, Date birthDay, String email, String address, String password, String phoneNumber, String picture, String kindOfEmployee) {
-        this.name = name;
-        this.birthDay = birthDay;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.picture = picture;
-        this.kindOfEmployee = kindOfEmployee;
+    //	khởi tạo User từ UserDTO
+    public static User adminCreateUser(UserDTO userDTO) {
+        User user = new User();
+
+        user.setName(userDTO.getName());
+        user.setBirthday(new Date(userDTO.getBirthday()));
+        user.setPosition(userDTO.getPosition());
+        user.setPhone(userDTO.getPhone());
+        user.setEmail(userDTO.getEmail());
+        user.setRole(userDTO.getRole());
+
+        return user;
     }
 }
