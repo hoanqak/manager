@@ -121,11 +121,11 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             }
             System.out.println(checkInOut.getStartTime());
             CheckInOutDTO checkInOutDTO = new CheckInOutDTO();
-            checkInOutDTO.setCheckin(checkInOut.getStartTime().getTime());
-            checkInOutDTO.setCheckout(checkInOut.getEndTime().getTime());
+            checkInOutDTO.setStartTime(checkInOut.getStartTime().getTime());
+            checkInOutDTO.setEndTime(checkInOut.getEndTime().getTime());
             checkInOutDTO.setId(checkInOutDTO.getId());
-            checkInOutDTO.setName(checkInOut.getUser().getName());
-            checkInOutDTO.setTotal(checkInOut.getTotalTime());
+            checkInOutDTO.setUser(checkInOut.getUser());
+            checkInOutDTO.setTotalTime(checkInOut.getTotalTime());
             return new ResponseEntity<Object>(checkInOutDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>("MESSAGE_NOT_EXITS", HttpStatus.OK);

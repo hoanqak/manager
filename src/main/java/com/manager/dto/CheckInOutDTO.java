@@ -1,10 +1,11 @@
 package com.manager.dto;
 
-import com.manager.model.CheckInOut;
+import com.manager.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dozer.Mapping;
 
 @Getter
 @Setter
@@ -12,22 +13,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CheckInOutDTO {
 	private int id;
-	private int id_user;
-	private String name;
-	private int position;
-	private long checkin;
-	private long checkout;
-	private int total;
+//	private int id_user;
+//	private String name;
+//	private int position;
+	private long startTime;
+	private long endTime;
+	private int totalTime;
 	private long timeCheck;
+	private long dayCheckIn;
+	private User user;
 
-	public CheckInOutDTO(CheckInOut checkInOut) {
-		this.id = checkInOut.getId();
-		this.id_user = checkInOut.getUser().getId();
-		this.name = checkInOut.getUser().getName();
-		this.checkin = checkInOut.getStartTime().getTime();
-		this.checkout = checkInOut.getEndTime().getTime();
-		this.total = (int) checkInOut.getTotalTime();
-		this.position = checkInOut.getUser().getPosition();
-
-	}
 }

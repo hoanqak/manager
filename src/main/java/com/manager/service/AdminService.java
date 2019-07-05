@@ -1,12 +1,11 @@
 package com.manager.service;
 
-import com.manager.dto.CheckInOutDTO;
+import com.manager.dto.TotalWorkingDayDTO;
 import com.manager.dto.UserDTO;
 import com.manager.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Email;
 import java.util.List;
 
 @Service
@@ -21,5 +20,5 @@ public interface AdminService {
 	//	trả về User có Id cần tìm, chuyển toàn bộ thông tin lên form Edit của Admin
 	ResponseEntity getUserByIdToEditPage(int id);
 
-
+	List<TotalWorkingDayDTO> getTotalCheckInInMonth();
 }

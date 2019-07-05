@@ -1,7 +1,5 @@
 package com.manager.model;
 
-import com.manager.dto.UserDTO;
-import com.manager.md5.MD5;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,12 +23,11 @@ public class User {
     @Column(name = "fullname")
     private String name;
     @Column(name="birth_day")
-    private Date birthDay;
+    private Date birthday;
     @Column(name="email", unique = true)
     private String email;
     @Column(name="address")
     private String address;
-    @Column
     private String password;
     @Column(name="phone_number", length = 10)
     private String phoneNumber;
@@ -50,19 +47,4 @@ public class User {
     private int department;
     private int position;
 
-    //	khởi tạo User từ UserDTO
-    public static User adminCreateUser(UserDTO userDTO) {
-        User user = new User();
-	    MD5 md5 = new MD5();
-	    String passwordDefault = md5.convertToMD5(String.valueOf(12345678));
-	    user.setPassword(passwordDefault);
-        user.setName(userDTO.getName());
-        user.setBirthDay(new Date(userDTO.getBirthday()));
-        user.setPosition(userDTO.getPosition());
-        user.setPhoneNumber(userDTO.getPhone());
-        user.setEmail(userDTO.getEmail());
-        user.setRole(userDTO.getRole());
-
-        return user;
-    }
 }
