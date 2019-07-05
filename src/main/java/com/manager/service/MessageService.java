@@ -15,7 +15,7 @@ public interface MessageService {
 
 	RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request);
 
-	ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request);
+	ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request, int type);
 
 	MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo);
 

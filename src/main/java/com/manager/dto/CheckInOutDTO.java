@@ -14,6 +14,7 @@ public class CheckInOutDTO {
 	private int id;
 	private int id_user;
 	private String name;
+	private long dayCheckIn;
 	private int position;
 	private long checkin;
 	private long checkout;

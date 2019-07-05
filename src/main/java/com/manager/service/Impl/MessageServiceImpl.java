@@ -10,6 +10,9 @@ import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -40,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
 		User user = getUser(request);
 		if (requestMessageDTO.getType() == 0) {
 			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setTitle("ID: " + "(" + user.getName() + ")" + " Request edit checkin time");
+			messageDemo.setTitle("ID: " + "(" + user.getName() + ")" + " Request edit checkInOut time");
 			messageDemo.setContent(requestMessageDTO.getContent());
 			messageDemo.setFrom(user);
 			messageDemo.setType(0);
@@ -49,7 +52,8 @@ public class MessageServiceImpl implements MessageService {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
 			});
-		} else if (requestMessageDTO.getType() == 1) {
+		}
+		/* else if (requestMessageDTO.getType() == 1) {
 			MessageDemo messageDemo = new MessageDemo();
 			messageDemo.setTitle("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
 			messageDemo.setContent(requestMessageDTO.getContent());
@@ -60,14 +64,14 @@ public class MessageServiceImpl implements MessageService {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
 			}
-		}
+		}*/
 		return requestMessageDTO;
 	}
 
-	public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request) {
+	public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request, int type) {
 		User user = getUser(request);
 		List<MessageDemoDTO> messageDemoDTOList = new LinkedList<MessageDemoDTO>();
-		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndTo(false, user)) {
+		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndToAndType(false, user, type)) {
 			MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
 			messageDemoDTOList.add(messageDemoDTO);
 		}
@@ -75,12 +79,26 @@ public class MessageServiceImpl implements MessageService {
 
 	}
 
+	public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnreadPage(HttpServletRequest request, int page, int size){
+		User user = getUser(request);
+		Pageable pageable =  PageRequest.of(page, size);
+		Page<MessageDemo> pageMessageDemo = messageDemoRepository.getAllMessageByStatusAndToAndTypePage(pageable,false, user);
+		List<MessageDemoDTO> messageDemoDTOList = new LinkedList<>();
+		pageMessageDemo.getContent().forEach(messageDemo ->{
+			MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+			messageDemoDTOList.add(messageDemoDTO);
+		});
+
+		return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
+	}
+
 	public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
 		MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
 		messageDemoDTO.setContent(messageDemo.getContent());
-		messageDemoDTO.setMessage(messageDemo.getTitle());
+		messageDemoDTO.setTitle(messageDemo.getTitle());
 		messageDemoDTO.setTo(messageDemo.getTo().getName());
 		messageDemoDTO.setFrom(messageDemo.getFrom().getName());
+		messageDemoDTO.setStatus(messageDemo.getStatus());
 		if(messageDemo.getType() == 0){
 			messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
 		}else if(messageDemo.getType() == 1){
@@ -88,16 +106,16 @@ public class MessageServiceImpl implements MessageService {
 		}else if(messageDemo.getType() == -1){
 			messageDemoDTO.setType("REQUEST_EDIT_CHECKOUT");
 		}
+		messageDemoDTO.setIdRecord(messageDemo.getIdReport());
 		messageDemoDTO.setId(messageDemo.getId());
 		long time = messageDemo.getTimeRequest().getTime();
 		messageDemoDTO.setTimeRequest(time);
-
 		return messageDemoDTO;
 	}
 
 	public ResponseEntity readAll(HttpServletRequest request) {
 		User user = getUser(request);
-		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndTo(false, user)) {
+		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndToAndType(false, user, 1)) {
 			messageDemo.setStatus(true);
 		}
 		return new ResponseEntity(true, HttpStatus.OK);

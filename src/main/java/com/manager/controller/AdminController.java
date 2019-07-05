@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(value = {"/api/v1/admin", "/api/v1/manager"})
 public class AdminController {
@@ -52,7 +54,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/checkInOuts/")
-	public ResponseEntity getACheckInById(@RequestParam("id") int id) {
-		return checkInOutService.getACheckInById(id);
+	public ResponseEntity getACheckInById(@RequestParam("id") int id, HttpServletRequest request) {
+		return checkInOutService.getACheckInById(id, request);
 	}
 }

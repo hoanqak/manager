@@ -14,7 +14,7 @@ import java.util.List;
 public interface LeaveApplicationService {
 	ResponseEntity<RequestADayOffDTO> requestADayOff(RequestADayOffDTO requestADayOffDTO, HttpServletRequest request);
 
-	ResponseEntity<List<LeaveApplication>> listDayOff(ListADayOffDTO listADayOffDTO, HttpServletRequest request);
+	ResponseEntity listDayOff(int month, HttpServletRequest request);
 
 	LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication);
 

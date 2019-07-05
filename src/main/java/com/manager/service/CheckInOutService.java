@@ -19,5 +19,7 @@ public interface CheckInOutService {
 
 	ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize);
 
-	ResponseEntity getACheckInById(int id);
+	ResponseEntity getACheckInById(int id, HttpServletRequest request);
+
+	ResponseEntity getCheckInOutAndPage(int page, int size, HttpServletRequest request);
 }
