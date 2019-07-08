@@ -22,7 +22,9 @@ public class ResetPasswordDTO {
     private String email;
     @Size(max = 15, min = 8)
     private String oldPassword;
+    @Size(max = 15, min = 8)
     private String newPassword;
+    @Size(max = 15, min = 8)
     private String newPassword1;
 
 }

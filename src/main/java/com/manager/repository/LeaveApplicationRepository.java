@@ -16,7 +16,7 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
 	@Query(nativeQuery = true, value = "select * from leave_application as leaveApplication where MONTH(leaveApplication.created_time) = :mon and leaveApplication.id_user=:userId")
 	List<LeaveApplication> getListApplicationInWeek(@Param("mon") int month, @Param("userId") int userId);
 	@Query("select leaveApplication from LeaveApplication leaveApplication where leaveApplication.user = :user")
-	Page<LeaveApplication> getLeaveApplicationByPage(Pageable pageable, User user);
+	Page<LeaveApplication> getLeaveApplicationByPage(Pageable pageable,@Param("user") User user);
 	@Query("select leaveApplication from LeaveApplication leaveApplication where leaveApplication.id=:id")
 	LeaveApplication getLeaveApplicationsById(@Param("id") int id);
 }

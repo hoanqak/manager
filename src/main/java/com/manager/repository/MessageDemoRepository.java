@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface MessageDemoRepository extends JpaRepository<MessageDemo, Integer> {
-	MessageDemo getMessageDemoById(int id);
 
 	@Query("select message from MessageDemo message where message.status=:status and message.to=:user and message.type=:type")
 	List<MessageDemo> getAllMessageByStatusAndToAndType(@Param("status") boolean status, @Param("user") User user,@Param("type") int type);
@@ -21,4 +20,6 @@ public interface MessageDemoRepository extends JpaRepository<MessageDemo, Intege
 	@Query("select message from MessageDemo message where message.status=:status and message.to=:user")
 	Page<MessageDemo> getAllMessageByStatusAndToAndTypePage(Pageable pageable, @Param("status") boolean status, @Param("user") User user);
 
+	MessageDemo getMessageDemoByToAndId(User user, int id);
+	Page<MessageDemo> getMessageDemoByTo(Pageable pageable, User user);
 }

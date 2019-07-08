@@ -81,11 +81,13 @@ public class EmployeeController{
 		return userService.changePassword(resetPasswordDTO, request);
 	}
 
+	// check in
 	@PostMapping("/checkIn")
 	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
 		return checkInOutService.checkIn(checkInOutDTO, request);
 	}
 
+	// check out
 	@PostMapping("/checkOut")
 	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
 		return checkInOutService.checkOut(checkInOutDTO, request);
@@ -97,169 +99,50 @@ public class EmployeeController{
 		return checkInOutService.getListCheckInOut(request);
 	}*/
 
+	//get all list check in check out
 	@GetMapping("/checkInOuts/{page}/{size}")
 	public ResponseEntity test(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
 		return checkInOutService.getCheckInOutAndPage(page, size, request);
 	}
 
-	@GetMapping("/requestEditCheckInOut")
+	// request a edit check in or check out to admin
+	@PostMapping("/requestEditCheckInOut")
 	public RequestMessageDTO requestEditCheckInOut(@RequestBody RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
 		return message.requestEditCheckInOut(requestMessageDTO, request);
 	}
 
-	@GetMapping("/messagesUnread")
-	public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request) {
-		return message.getAllMessageUnread(request, 0);
+	// get list message unread by page and size
+	@GetMapping("/messageUnread/{page}/{size}")
+	public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("size") int size) {
+		return message.getAllMessageUnreadPage(request, page, size);
 	}
 
-	@Autowired
-	MessageDemoRepository messageDemoRepository;
+	//read a message
 	@PostMapping("/readMessage/{id}")
-	public ResponseEntity readMessage(@PathVariable("id") int id){
-		MessageDemo messageDemo = messageDemoRepository.getMessageDemoById(id);
-		if(messageDemo != null){
-			messageDemo.setStatus(true);
-			messageDemo = messageDemoRepository.save(messageDemo);
-
-			MessageDemoDTO messageDemoDTO = new MessageServiceImpl().convertToMessageDemoDTO(messageDemo);
-			return new ResponseEntity(messageDemoDTO, HttpStatus.OK);
-		}
-		return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+	public ResponseEntity readMessage(@PathVariable("id") int id, HttpServletRequest request){
+		return message.readAMessage(id, request);
 	}
 
+	// create leave application send to manager
 	@PostMapping("/requestADayOff")
-	public ResponseEntity requestADayOff(@RequestBody RequestADayOffDTO requestADayOffDTO, HttpServletRequest request) {
-		return leaveApplicationService.requestADayOff(requestADayOffDTO, request);
+	public ResponseEntity requestADayOff(@RequestBody LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
+		return leaveApplicationService.requestADayOff(leaveApplicationDTO, request);
 	}
-
-
+	//get leave application by month
 	@GetMapping("/listDayOff/{month}")
 	public ResponseEntity<List<LeaveApplication>> listDayOff(@PathVariable("month") int month, HttpServletRequest request) {
 		return leaveApplicationService.listDayOff(month, request);
 	}
 
+	//get list leave application with page and size
 	@GetMapping("/listDayOff/{page}/{size}")
 	public ResponseEntity listDayOffPage(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
 		return leaveApplicationService.listDayOffPage(page, size, request);
 	}
-
-	/*@Autowired
-	TokenRepository tokenRepository;
-	@Autowired
-	UserRepository userRepository;
-
-	@GetMapping("/admin/hello")
-	public User admin(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
-		Token token = tokenRepository.getTokenByCode(code);
-		if (token != null) {
-			return userRepository.getUserById(token.getId());
-		}
-		return null;
+	@GetMapping("/messages/{page}/{size}")
+	public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
+		return message.messages(page, size, request);
 	}
 
-	@GetMapping("/manager/hello")
-	public User manager(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
-		Token token = tokenRepository.getTokenByCode(code);
-		return userRepository.getUserById(token.getId());
-	}
-
-	@Autowired
-	MessageRepository messageRepository;
-
-	@GetMapping("admin/message")
-	public ResponseEntity<List<Message>> message() {
-		List<Message> messageList = messageRepository.findAll();
-		return new ResponseEntity<>(messageList, HttpStatus.NOT_FOUND);
-	}
-
-	@GetMapping("admin/message/{status}")
-	public ResponseEntity<List<MessageDTO>> getListMessage(@PathVariable("status") int status) {
-		List<MessageDTO> messageDTOList = new LinkedList<MessageDTO>();
-		if (status >= 1) {
-			List<Message> messageList = messageRepository.getListMessageByStatus(true);
-			for (Message message : messageList) {
-				MessageDTO messageDTO = convertMessageDTO(message);
-				messageDTOList.add(messageDTO);
-			}
-			return new ResponseEntity<List<MessageDTO>>(messageDTOList, HttpStatus.OK);
-		} else {
-			List<Message> messageList = messageRepository.getListMessageByStatus(false);
-			for (Message message : messageList) {
-				MessageDTO messageDTO = convertMessageDTO(message);
-				messageDTOList.add(messageDTO);
-			}
-			return new ResponseEntity<List<MessageDTO>>(messageDTOList, HttpStatus.OK);
-		}
-	}
-
-	public MessageDTO convertMessageDTO(Message message) {
-		MessageDTO messageDTO = new MessageDTO();
-		messageDTO.setId(message.getId());
-*//*
-		messageDTO.setMessage(message.getMessage());
-*//*
-		messageDTO.setReason(message.getLeaveApplication().getReason());
-		messageDTO.setStatus(message.getLeaveApplication().getStatus());
-		long startDate = message.getLeaveApplication().getStartTime().getTime();
-		long endDate = message.getLeaveApplication().getEndTime().getTime();
-		long createdDate = message.getCreatedTime().getTime();
-		messageDTO.setCreatedDate(createdDate);
-		messageDTO.setStartDate(startDate);
-		messageDTO.setEndDate(endDate);
-		messageDTO.setIdApplication(message.getLeaveApplication().getId());
-		messageDTO.setName(message.getLeaveApplication().getUser().getName());
-		return messageDTO;
-	}
-
-  *//*  @PostMapping("/admin/message/{id}")
-    public ResponseEntity changeStatus(@PathVariable("id") int id){
-        Message message = messageRepository.getOne(id);
-        if(message != null){
-            message.getLeaveApplication();
-        }
-        return null;
-    }*//*
-
-	@GetMapping("admin/changeStatus")
-	public ResponseEntity changeStatus(@RequestBody MessageDTO messageDTO) {
-		Message message = messageRepository.getMessageById(messageDTO.getId());
-		if (message != null) {
-			message.setStatus(true);
-			message.getLeaveApplication().setStatus(messageDTO.getStatus());
-			message = messageRepository.save(message);
-			MessageDTO messageDTO1 = convertMessageDTO(message);
-			return new ResponseEntity(messageDTO1, HttpStatus.OK);
-		}
-
-		return new ResponseEntity("LEAVE_APPLICATION_NOT_EXITS", HttpStatus.BAD_REQUEST);
-	}
-
-
-*//*    @PutMapping("/admin/readMessage")
-    public ResponseEntity readMessage(){
-
-    }*//*
-
-
-
-
-	*//*@GetMapping("/admin/messageUnread")
-	public ResponseEntity messageUnread(HttpServletRequest request) {
-		return message.getAllMessageUnread(request, 0);
-	}
-
-	@PostMapping("/admin/readAll")
-	public ResponseEntity readAll(HttpServletRequest request) {
-		return message.readAll(request);
-	}
-
-
-	@GetMapping("/admin/viewRequest")
-	public ResponseEntity<Object> viewMessage(@RequestBody RequestMessageDTO requestMessageDTO){
-		return leaveApplicationService.viewMessage(requestMessageDTO);
-	}
-*/
 
 }

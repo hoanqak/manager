@@ -30,8 +30,9 @@ public interface CheckInOutRepository extends JpaRepository<CheckInOut, Integer>
 	@Query("select c from CheckInOut  c where c.dayCheckIn >= :startDate and c.dayCheckIn <= :endDate and c.user = :idUser")
 	Page<CheckInOut> findCheckInOutsByDayCheckInAndAndUserId(Pageable pageable, @Param("startDate") Date startDate,
 	                                                         @Param("endDate") Date endDate, @Param("idUser") int idUser);
-
 	@Query("SELECT c FROM CheckInOut c where c.user=:user")
 	Page<CheckInOut> getCheckInOutByUserAndPage(@Param("user") User user, Pageable pageable);
+
+	CheckInOut getCheckInOutById(int id);
 
 }

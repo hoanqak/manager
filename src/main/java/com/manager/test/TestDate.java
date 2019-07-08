@@ -17,8 +17,8 @@ public class TestDate {
 	static CheckInOutRepository checkInOutRepository;
 	public static void main(String[] args) throws InterruptedException {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR_OF_DAY, 10);
-		calendar.set(Calendar.MINUTE, 31);
+		calendar.set(Calendar.HOUR_OF_DAY, 9);
+		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		System.out.println(calendar.getTimeInMillis());
 		calendar.set(Calendar.HOUR_OF_DAY, 18);

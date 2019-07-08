@@ -22,4 +22,5 @@ public interface CheckInOutService {
 	ResponseEntity getACheckInById(int id, HttpServletRequest request);
 
 	ResponseEntity getCheckInOutAndPage(int page, int size, HttpServletRequest request);
+	boolean updateCheckInOut(CheckInOutDTO checkInOutDTO);
 }

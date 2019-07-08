@@ -1,3 +1,4 @@
+/*
 package com.manager.dto;
 
 import lombok.AllArgsConstructor;
@@ -20,3 +21,4 @@ public class RegisterDTO {
 	private String email;
 
 }
+*/
