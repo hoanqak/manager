@@ -1,6 +1,6 @@
 package com.manager.service.Impl;
 
-import com.manager.dto.TotalWorkingDayDTO;
+import com.manager.model.TotalWorkingDay;
 import com.manager.dto.UserDTO;
 import com.manager.model.CheckInOut;
 import com.manager.model.User;
@@ -17,9 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
 
-//	mapping model
+	//	mapping model
 	DozerBeanMapper mapper = new DozerBeanMapper();
 
 
@@ -88,14 +87,40 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public List<TotalWorkingDayDTO> getTotalCheckInInMonth() {
-		List<TotalWorkingDayDTO> list = new ArrayList<>();
-		List<CheckInOut> checkInOuts = checkInOutRepository.findAll();
+	public List<TotalWorkingDay> getTotalCheckInInMonth(Date startDate, Date endDate) {
+		List<TotalWorkingDay> list = new ArrayList<>();
+		List<CheckInOut> checkInOuts;
+//		List lấy ra toàn bộ danh sách nhân viên trong công ty.
+		List<User> users = userRepository.findAll();
 
-		checkInOuts.forEach(checkInOut -> {
-			TotalWorkingDayDTO totalWorkingDayDTO = new TotalWorkingDayDTO();
-
-		});
+		for (User user : users) {
+			checkInOuts = checkInOutRepository.getListCheckInOutsByDayCheckInAndUserId(startDate, endDate, user.getId());
+			TotalWorkingDay workingDayDTO = new TotalWorkingDay();
+			workingDayDTO.setUserId(user.getId());
+			workingDayDTO.setName(user.getName());
+			workingDayDTO.setPosition(user.getPosition());
+//			workingDayDTO.setTotal();
+//			chuyển từ List sang Map trong Java 8.
+//			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
+			Map<String, Integer> days = new HashMap<>();
+			for(CheckInOut checkInOut : checkInOuts){
+				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
+			}
+			double total = 0;
+			for(CheckInOut checkInOut : checkInOuts){
+				total += checkInOut.getTotalTime();
+			}
+			total = total/8;
+			workingDayDTO.setTotal(total);
+			workingDayDTO.setDays(days);
+			list.add(workingDayDTO);
+		}
 		return list;
+	}
+
+	public String date2String(Date date){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1);
 	}
 }

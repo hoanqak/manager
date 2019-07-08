@@ -1,21 +1,16 @@
 package com.manager.controller;
 
-import com.manager.dto.CheckInOutDTO;
-import com.manager.dto.TotalWorkingDayDTO;
+import com.manager.model.TotalWorkingDay;
 import com.manager.dto.UserDTO;
 import com.manager.model.User;
-import com.manager.repository.CheckInOutRepository;
 import com.manager.service.AdminService;
 import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -72,9 +67,11 @@ public class AdminController {
 	}
 
 	@GetMapping("/checkInOuts/allMonth")
-	public List<TotalWorkingDayDTO> getTotalCheckinInMonth(@RequestParam("startDate") long startDate, @RequestParam("endDate") long endDate){
+	public List<TotalWorkingDay> getTotalCheckinInMonth(@RequestParam("startDate") long startDate, @RequestParam("endDate") long endDate){
 
-		return null;
+
+
+		return adminService.getTotalCheckInInMonth(new Date(startDate), new Date(endDate));
 	}
 
 

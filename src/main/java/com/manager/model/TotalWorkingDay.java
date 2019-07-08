@@ -1,4 +1,4 @@
-package com.manager.dto;
+package com.manager.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,13 +11,13 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TotalWorkingDayDTO {
+public class TotalWorkingDay {
 	private int userId;
 	private String name;
 	private int position;
 	private double total;
-	//	Long là giá trị chuyển sang từ dạng Date của dayCheckIn.
+//	Key là dayCheckIn, giá trị dạng Date.
 //	Integer là giá trị totalTime.
-	private Map<Long, Integer> days;
+	private Map<String, Integer> days;
 
 }
