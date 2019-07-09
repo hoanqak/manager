@@ -227,4 +227,6 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		return new ResponseEntity(mapper.map(checkInOutRepository.getOne(id), CheckInOutDTO.class), HttpStatus.OK);
 
 	}
+
+
 }

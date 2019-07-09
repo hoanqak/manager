@@ -19,5 +19,5 @@ public class TotalWorkingDay {
 //	Key là dayCheckIn, giá trị dạng Date.
 //	Integer là giá trị totalTime.
 	private Map<String, Integer> days;
-
+	private int month;
 }

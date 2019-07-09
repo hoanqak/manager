@@ -1,5 +1,6 @@
 package com.manager.service;
 
+import com.manager.dto.CheckInOutDTO;
 import com.manager.model.TotalWorkingDay;
 import com.manager.dto.UserDTO;
 import com.manager.model.User;
@@ -22,4 +23,5 @@ public interface AdminService {
 	ResponseEntity getUserByIdToEditPage(int id);
 
 	List<TotalWorkingDay> getTotalCheckInInMonth(Date startDate, Date endDate);
+
 }

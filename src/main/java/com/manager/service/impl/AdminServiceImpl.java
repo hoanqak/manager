@@ -1,12 +1,14 @@
 package com.manager.service.Impl;
 
-import com.manager.model.TotalWorkingDay;
+import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.UserDTO;
 import com.manager.model.CheckInOut;
+import com.manager.model.TotalWorkingDay;
 import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
+import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,6 +29,8 @@ public class AdminServiceImpl implements AdminService {
 	UserRepository userRepository;
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
+	@Autowired
+	CheckInOutService checkInOutService;
 
 	//	mapping model
 	DozerBeanMapper mapper = new DozerBeanMapper();
@@ -99,18 +102,22 @@ public class AdminServiceImpl implements AdminService {
 			workingDayDTO.setUserId(user.getId());
 			workingDayDTO.setName(user.getName());
 			workingDayDTO.setPosition(user.getPosition());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(startDate);
+			workingDayDTO.setMonth(calendar.get(Calendar.MONTH));
 //			workingDayDTO.setTotal();
 //			chuyển từ List sang Map trong Java 8.
 //			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
 			Map<String, Integer> days = new HashMap<>();
-			for(CheckInOut checkInOut : checkInOuts){
+			for (CheckInOut checkInOut : checkInOuts) {
 				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
 			}
 			double total = 0;
-			for(CheckInOut checkInOut : checkInOuts){
+			for (CheckInOut checkInOut : checkInOuts) {
 				total += checkInOut.getTotalTime();
 			}
-			total = total/8;
+			total = total / 8;
 			workingDayDTO.setTotal(total);
 			workingDayDTO.setDays(days);
 			list.add(workingDayDTO);
@@ -118,7 +125,17 @@ public class AdminServiceImpl implements AdminService {
 		return list;
 	}
 
-	public String date2String(Date date){
+//	@Override
+//	public ResponseEntity updateACheckInOut(int id, CheckInOutDTO checkInOutDTO) {
+//		CheckInOut checkInOut = checkInOutRepository.getOne(id);
+//		checkInOut.setStartTime(new Date(checkInOutDTO.getStartTime()));
+//		checkInOut.setEndTime(new Date(checkInOutDTO.getEndTime()));
+//
+////		update(Date checkin, Date checkout)
+//		return null;
+//	}
+
+	public String date2String(Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1);

@@ -1,12 +1,14 @@
 package com.manager.controller;
 
-import com.manager.model.TotalWorkingDay;
+import com.manager.config.WriteExcel;
 import com.manager.dto.UserDTO;
+import com.manager.model.TotalWorkingDay;
 import com.manager.model.User;
 import com.manager.service.AdminService;
 import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,11 +70,18 @@ public class AdminController {
 
 	@GetMapping("/checkInOuts/allMonth")
 	public List<TotalWorkingDay> getTotalCheckinInMonth(@RequestParam("startDate") long startDate, @RequestParam("endDate") long endDate){
-
-
-
 		return adminService.getTotalCheckInInMonth(new Date(startDate), new Date(endDate));
 	}
+
+	@GetMapping("/checkInOuts/allMonth/exportToExcel")
+	public ResponseEntity export2Excel(@RequestParam("path") String path, @RequestParam("startDate") long startDate,
+	                                   @RequestParam("endDate") long endDate) throws Exception {
+		WriteExcel writeExcel = new WriteExcel();
+		List<TotalWorkingDay> list = adminService.getTotalCheckInInMonth(new Date(startDate), new Date(endDate));
+		writeExcel.writeExcel(list, path);
+		return new ResponseEntity("EXPORT_FILE_SUCCESS", HttpStatus.OK);
+	}
+
 
 
 //	@Autowired
