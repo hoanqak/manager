@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.Notifications;
 import com.manager.dto.UserDTO;
 import com.manager.model.CheckInOut;
 import com.manager.model.TotalWorkingDay;
@@ -55,10 +56,10 @@ public class AdminServiceImpl implements AdminService {
 	public ResponseEntity createUser(User user) {
 		User userByEmail = userRepository.findUserByEmail(user.getEmail());
 		if (userByEmail != null) {
-			return new ResponseEntity("USER_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(Notifications.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
 		}
 		userRepository.save(user);
-		return new ResponseEntity("CREATE_USER_SUCCESS", HttpStatus.OK);
+		return new ResponseEntity(Notifications.CREATE_USER_SUCCESS, HttpStatus.OK);
 	}
 
 	@Override
@@ -72,14 +73,14 @@ public class AdminServiceImpl implements AdminService {
 		user.setRole(userDTO.getRole());
 		user.setUpdatedDate(new Date(userDTO.getUpdatedDate()));
 
-		return new ResponseEntity("UPDATE_USER_SUCCESS", HttpStatus.OK);
+		return new ResponseEntity(Notifications.UPDATE_USER_SUCCESS, HttpStatus.OK);
 
 	}
 
 	@Override
 	public ResponseEntity getUserByIdToEditPage(int id) {
 		User user = userRepository.findUserById(id);
-		if (user == null) return new ResponseEntity("USER_DOESNT_EXISTS", HttpStatus.OK);
+		if (user == null) return new ResponseEntity(Notifications.USER_DOESNT_EXISTS, HttpStatus.OK);
 
 		UserDTO userDTO = mapper.map(user, UserDTO.class);
 		return new ResponseEntity(userDTO, HttpStatus.OK);

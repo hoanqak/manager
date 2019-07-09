@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.Notifications;
 import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.RequestADayOffDTO;
 import com.manager.model.LeaveApplication;
@@ -44,7 +45,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     public ResponseEntity<RequestADayOffDTO> requestADayOff(LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
         String codeToken = request.getHeader("access_Token");
         if (codeToken == null) {
-            return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
         }
         Token token = tokenRepository.getTokenByCode(codeToken);
         User user = userRepository.getUserById(token.getId());
@@ -79,13 +80,13 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             });
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }
-        return new ResponseEntity("ERROR_REQUEST", HttpStatus.OK);
+        return new ResponseEntity(Notifications.ERROR_REQUEST, HttpStatus.OK);
     }
 
     public ResponseEntity<List<LeaveApplication>> listDayOff(int month, HttpServletRequest request) {
         String code = request.getHeader("access_Token");
         if (code == null) {
-            return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
         }
         Token token1 = tokenRepository.getTokenByCode(code);
         int idUser = token1.getId();

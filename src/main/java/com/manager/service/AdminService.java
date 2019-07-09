@@ -1,8 +1,7 @@
 package com.manager.service;
 
-import com.manager.dto.CheckInOutDTO;
-import com.manager.model.TotalWorkingDay;
 import com.manager.dto.UserDTO;
+import com.manager.model.TotalWorkingDay;
 import com.manager.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

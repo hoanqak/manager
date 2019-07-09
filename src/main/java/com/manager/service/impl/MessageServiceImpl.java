@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.Notifications;
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.MessageDemoDTO;
@@ -113,8 +114,6 @@ public class MessageServiceImpl implements MessageService {
             messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
         } else if (messageDemo.getType() == 1) {
             messageDemoDTO.setType("REQUEST_A_DAY_OFF");
-        } else if (messageDemo.getType() == -1) {
-            messageDemoDTO.setType("REQUEST_EDIT_CHECKOUT");
         }
         messageDemoDTO.setIdRecord(messageDemo.getIdReport());
         messageDemoDTO.setId(messageDemo.getId());
@@ -135,7 +134,7 @@ public class MessageServiceImpl implements MessageService {
         User user = getUser(request);
         MessageDemo messageDemo = messageDemoRepository.getMessageDemoByToAndId(user, id);
         if (messageDemo == null) {
-            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.MESSAGE_NOT_EXITS, HttpStatus.BAD_REQUEST);
         }
         CheckInOut checkInOut = checkInOutRepository.getCheckInOutById(messageDemo.getIdReport());
         LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(messageDemo.getIdReport());
@@ -159,7 +158,7 @@ public class MessageServiceImpl implements MessageService {
             return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
         }
         else{
-            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.MESSAGE_NOT_EXITS, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -167,14 +166,14 @@ public class MessageServiceImpl implements MessageService {
         User user = getUser(request);
         MessageDemo messageDemo = messageDemoRepository.getMessageDemoByToAndId(user, id);
         if (messageDemo == null) {
-            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.MESSAGE_NOT_EXITS, HttpStatus.BAD_REQUEST);
         }
 
         // get id of leave application
         int idLeaveApplication = messageDemo.getIdReport();
         LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(idLeaveApplication);
         if (leaveApplication == null) {
-            return new ResponseEntity("LEAVE_APPLICATION_NOT_EXITS", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.LEAVE_APPLICATION_NOT_EXITS, HttpStatus.BAD_REQUEST);
         }
         //reply result to sender
         MessageDemo messageReply = new MessageDemo();

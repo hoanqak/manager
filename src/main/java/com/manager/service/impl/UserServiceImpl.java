@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.Notifications;
 import com.manager.dto.LoginDTO;
 import com.manager.dto.ProfileDTO;
 import com.manager.dto.ResetPasswordDTO;
@@ -116,7 +117,7 @@ public class UserServiceImpl implements UserService {
                     transport.connect("smtp.gmail.com", emailSystem, passwordSystem);
                     transport.sendMessage(message, message.getAllRecipients());
                     transport.close();
-                    return new ResponseEntity<String>("COMPLETE_CHECK_MAIL", HttpStatus.OK);
+                    return new ResponseEntity<String>(Notifications.COMPLETE_CHECK_MAIL, HttpStatus.OK);
                 } catch (AddressException e) {
                     e.printStackTrace();
                 } catch (MessagingException e) {
@@ -124,7 +125,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        return new ResponseEntity<String>("EMAIL_NOT_EXITS", HttpStatus.OK);
+        return new ResponseEntity<String>(Notifications.EMAIL_NOT_EXISTS, HttpStatus.OK);
 
     }
 
@@ -138,7 +139,7 @@ public class UserServiceImpl implements UserService {
             //id of passwordIssuingCode = id of user
             User user = userRepository.getUserById(id);
             if (user == null) {
-                return new ResponseEntity<>("USER_NOT_EXITS", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(Notifications.USER_NOT_EXISTS, HttpStatus.BAD_REQUEST);
             }
             if (user.getEmail() != null && user.getEmail().equals(resetPasswordDTO.getEmail()) && user.getId() == id) {
                 if (resetPasswordDTO.getNewPassword() != null && resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getNewPassword1())) {
@@ -149,13 +150,13 @@ public class UserServiceImpl implements UserService {
                     //update new code
                     passwordIssuingCode.setCode(md5.convertToMD5(String.valueOf(random)));
                     passwordIssuingCodeRepository.save(passwordIssuingCode);
-                    return new ResponseEntity<>("COMPLETE", HttpStatus.OK);
+                    return new ResponseEntity<>(Notifications.COMPLETE, HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>("PASSWORD_INCORRECT", HttpStatus.OK);
+                    return new ResponseEntity<>(Notifications.PASSWORD_INCORRECT, HttpStatus.OK);
                 }
             }
         }
-        return new ResponseEntity<>("LINK_DIE", HttpStatus.OK);
+        return new ResponseEntity<>(Notifications.LINK_DIE, HttpStatus.OK);
     }
 
 
@@ -171,7 +172,7 @@ public class UserServiceImpl implements UserService {
             System.out.println(token.getToken());
             System.out.println(tokenNew);
         }
-        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+        return new ResponseEntity<>(Notifications.LOGOUT_SUCCESS, HttpStatus.OK);
     }
 
 
@@ -214,7 +215,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
         String code = request.getHeader("access_Token");
         if (code == null) {
-            return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
         }
         if (profileDTO.getPhoneNumber().length() > 10) {
             return new ResponseEntity("LENGTH_OF_PHONE_NUMBER_10", HttpStatus.OK);
@@ -245,7 +246,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
         String codeToken = request.getHeader("access_Token");
         if (codeToken == null) {
-            return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
         }
         Token token = tokenRepository.getTokenByCode(codeToken);
         User user = userRepository.findById(token.getId()).get();
@@ -255,12 +256,12 @@ public class UserServiceImpl implements UserService {
                 String convertNewPassword = md5.convertToMD5(resetPasswordDTO.getNewPassword());
                 user.setPassword(convertNewPassword);
                 userRepository.save(user);
-                return new ResponseEntity("COMPLETE", HttpStatus.OK);
+                return new ResponseEntity(Notifications.COMPLETE, HttpStatus.OK);
             } else {
-                return new ResponseEntity("PASSWORD INCORRECT", HttpStatus.OK);
+                return new ResponseEntity(Notifications.PASSWORD_INCORRECT, HttpStatus.OK);
             }
         } else {
-            return new ResponseEntity("WRONG_EMAIL_OR_PASSWORD", HttpStatus.OK);
+            return new ResponseEntity(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
         }
     }
 
@@ -296,9 +297,9 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } catch (MultipartException e) {
-            return new ResponseEntity("FILE_ERROR", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.FILE_ERROR, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity("ERROR", HttpStatus.OK);
+        return new ResponseEntity(Notifications.ERROR, HttpStatus.OK);
     }
 
 }

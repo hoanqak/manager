@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.Notifications;
 import com.manager.dto.CheckInOutDTO;
 import com.manager.model.CheckInOut;
 import com.manager.model.Token;
@@ -9,6 +10,7 @@ import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,10 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CheckInOutServiceImpl implements CheckInOutService {
@@ -67,10 +66,10 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 			Date dateNow = new Date();
 
 			if (compareDate(date, dateNow)) {
-				return new ResponseEntity<>("CHECKED", HttpStatus.OK);
+				return new ResponseEntity<>(Notifications.CHECKED, HttpStatus.OK);
 			} else {
 				if ((hourCheckIn == 8 && minuteCheckIn < 30) || (hourCheckIn < 8 && minuteCheckIn < 59)) {
-					return new ResponseEntity<>("CHECKIN_FAILED_BEFORE_8h30", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.CHECKIN_FAILED_BEFORE_8h30, HttpStatus.OK);
 				} else if (hourCheckIn >= 8 && minuteCheckIn >= 30 && hourCheckIn <= 9) {
 					calendar.set(Calendar.HOUR_OF_DAY, 9);
 					calendar.set(Calendar.MINUTE, 0);
@@ -78,14 +77,14 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 					checkInOut.setDayCheckIn(calendar.getTime());
 					checkInOut.setUser(user);
 					checkInOutRepository.save(checkInOut);
-					return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.CHECKIN_SUCCESS, HttpStatus.OK);
 				} else if (hourCheckIn >= 9 && hourCheckIn <= 10 && minuteCheckIn <= 30) {
 					checkInOut.setDayCheckIn(calendar.getTime());
 					checkInOut.setStartTime(calendar.getTime());
 					checkInOut.setUser(user);
 
 					checkInOutRepository.save(checkInOut);
-					return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.CHECKIN_SUCCESS, HttpStatus.OK);
 				} else if (hourCheckIn >= 10 && minuteCheckIn > 30 && hourCheckIn < 11) {
 					calendar.set(Calendar.HOUR_OF_DAY, 13);
 					calendar.set(Calendar.MINUTE, 0);
@@ -94,7 +93,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 					checkInOut.setUser(user);
 					checkInOutRepository.save(checkInOut);
 					//  return new ResponseEntity<>("CHECKIN_FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
-					return new ResponseEntity<>("CHECKIN_FAILED_AFTER_10h30", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.CHECKIN_FAILED_AFTER_10h30, HttpStatus.OK);
 				} else if (hourCheckIn == 12 && minuteCheckIn <= 59) {
 					checkInOut.setUser(user);
 					checkInOut.setDayCheckIn(calendar.getTime());
@@ -103,26 +102,26 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 					checkInOut.setStartTime(calendar.getTime());
 					checkInOutRepository.save(checkInOut);
 					//return new ResponseEntity<String>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
-					return new ResponseEntity<String>("CHECKIN_SUCCESS", HttpStatus.OK);
+					return new ResponseEntity<String>(Notifications.CHECKIN_SUCCESS, HttpStatus.OK);
 				} else if (hourCheckIn >= 13 && hourCheckIn <= 16) {
 					if (hourCheckIn == 16 && minuteCheckIn > 1) {
 						//return new ResponseEntity<>("CHECKIN_FAILED_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
-						return new ResponseEntity<>("CHECKIN_FAILED_AFTER_16h", HttpStatus.OK);
+						return new ResponseEntity<>(Notifications.CHECKIN_FAILED_AFTER_16h, HttpStatus.OK);
 					}
 					checkInOut.setDayCheckIn(calendar.getTime());
 					checkInOut.setStartTime(calendar.getTime());
 					checkInOut.setUser(user);
 					checkInOutRepository.save(checkInOut);
 					//return new ResponseEntity<>("CHECKIN_SUCCESS_" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
-					return new ResponseEntity<>("CHECKIN_SUCCESS", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.CHECKIN_SUCCESS, HttpStatus.OK);
 
 				} else {
 					// return new ResponseEntity<>("TIMEOUT" + hourCheckIn + "_" + minuteCheckIn, HttpStatus.OK);
-					return new ResponseEntity<>("TIMEOUT", HttpStatus.OK);
+					return new ResponseEntity<>(Notifications.TIMEOUT, HttpStatus.OK);
 				}
 			}
 		}
-		return new ResponseEntity<>("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
 
 	}
 
@@ -179,10 +178,10 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 			checkInOutRepository.save(checkInOut);
 
-			return new ResponseEntity("CHECKOUT_SUCCESS", HttpStatus.OK);
+			return new ResponseEntity(Notifications.CHECKOUT_SUCCESS, HttpStatus.OK);
 
 		} else {
-			return new ResponseEntity<>("PLEASE_CHECKIN", HttpStatus.OK);
+			return new ResponseEntity<>(Notifications.PLEASE_CHECKIN, HttpStatus.OK);
 		}
 
 
@@ -221,20 +220,90 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		return new ResponseEntity(checkInOutDTOS, HttpStatus.OK);
 	}
 
+	public boolean updateCheckInOut(CheckInOutDTO checkInOutDTO) {
+		long timeCheckIn = checkInOutDTO.getStartTime();
+		System.out.println(timeCheckIn);
+		long timeCheckOut = checkInOutDTO.getEndTime();
+		System.out.println(timeCheckOut);
+		CheckInOut checkInOut = checkInOutRepository.getCheckInOutById(checkInOutDTO.getId());
+		if (checkInOut != null) {
+			Calendar checkIn = Calendar.getInstance();
+			Calendar checkOut = Calendar.getInstance();
+			checkIn.setTimeInMillis(timeCheckIn);
+			checkOut.setTimeInMillis(timeCheckOut);
+			int total = calculateTotal(checkIn.getTime(), checkOut.getTime());
+			if (checkIn.get(Calendar.HOUR_OF_DAY) < 12 && checkOut.get(Calendar.HOUR_OF_DAY) > 13) {
+				total = total - 60;
+			}
+			checkInOut.setStartTime(checkIn.getTime());
+			checkInOut.setEndTime(checkOut.getTime());
+			checkInOut.setTotalTime(total);
+			return true;
+		}
+		return false;
+
+	}
+
+	public int calculateTotal(Date checkIn, Date checkOut) {
+		long timeCheckIn = checkIn.getTime();
+		long timeCheckOut = checkOut.getTime();
+
+		int total = (int) ((timeCheckOut - timeCheckIn) / 1000) / 60;
+
+		return total;
+	}
+
+
 	@Override
 	public ResponseEntity getACheckInById(int id, HttpServletRequest request) {
+		User user = getUserInHeader(request);
+		BeanMappingBuilder beanMappingBuilder = getBeanMappingBuilder();
+		DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+		dozerBeanMapper.addMapping(beanMappingBuilder);
+		CheckInOut checkInOut = checkInOutRepository.getOne(id);
+		CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
+		dozerBeanMapper.map(user, checkInOutDTO);
+		return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
+	}
 
-		return null;
+	public BeanMappingBuilder getBeanMappingBuilder() {
+		BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+			@Override
+			protected void configure() {
+				mapping(CheckInOut.class, CheckInOutDTO.class).fields("id", "id").fields("dayCheckIn", "dayCheckIn")
+						.fields("startTime", "checkIn").fields("endTime", "checkOut")
+						.fields("totalTime", "total");
+				mapping(User.class, CheckInOutDTO.class).fields("name", "name");
+			}
+		};
+
+		return beanMappingBuilder;
+	}
+
+	public User getUserInHeader(HttpServletRequest request) {
+		String code = request.getHeader("access_Token");
+		Token token = tokenRepository.getTokenByCode(code);
+		User user = userRepository.getUserById(token.getId());
+
+		return user;
 	}
 
 	@Override
 	public ResponseEntity getCheckInOutAndPage(int page, int size, HttpServletRequest request) {
-		return null;
-	}
-
-	@Override
-	public boolean updateCheckInOut(CheckInOutDTO checkInOutDTO) {
-		return false;
+		User user = getUserInHeader(request);
+		BeanMappingBuilder beanMappingBuilder = getBeanMappingBuilder();
+		Pageable pageable = PageRequest.of(page, size);
+		Page<CheckInOut> pageCheckInOut = checkInOutRepository.getCheckInOutByUserAndPage(user, pageable);
+		List<CheckInOutDTO> checkInOutDTOList = new LinkedList<>();
+		DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+		dozerBeanMapper.addMapping(beanMappingBuilder);
+		pageCheckInOut.getContent().forEach(checkInOut -> {
+			CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
+			dozerBeanMapper.map(user, checkInOutDTO);
+			System.out.println(checkInOut.getStartTime());
+			checkInOutDTOList.add(checkInOutDTO);
+		});
+		return new ResponseEntity(checkInOutDTOList, HttpStatus.OK);
 	}
 
 	@Override

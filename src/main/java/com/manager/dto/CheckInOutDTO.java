@@ -1,6 +1,5 @@
 package com.manager.dto;
 
-import com.manager.model.CheckInOut;
 import com.manager.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
