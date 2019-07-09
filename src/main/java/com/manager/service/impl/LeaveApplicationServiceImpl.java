@@ -71,8 +71,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 			// type = 0: edit checkinout
 			messageDemo.setType(1);
 
-			//send to all manager(role 3)
-			userRepository.getRoleUser(3).forEach(user1 -> {
+			//send to all manager(role 2)
+			userRepository.getRoleUser(2).forEach(user1 -> {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
 			});

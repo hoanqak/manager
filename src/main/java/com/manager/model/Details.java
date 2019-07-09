@@ -8,7 +8,7 @@ public class Details {
 
 	public static final String[] roles = {"ROLE_EMPLOYEE", "ROLE_ADMIN", "ROLE_MANAGER"};
 
-	public static final String [] departments = {""};
+	public static final String[] departments = {""};
 
 
 }
