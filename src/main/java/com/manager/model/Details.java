@@ -6,7 +6,7 @@ public class Details {
 
 	public static final String[] status = {"Active", "Block"};
 
-	public static final String[] roles = {"ROLE_MANAGER", "ROLE_ADMIN", "ROLE_EMPLOYEE"};
+	public static final String[] roles = {"ROLE_EMPLOYEE", "ROLE_ADMIN", "ROLE_MANAGER"};
 
 	public static final String [] departments = {""};
 

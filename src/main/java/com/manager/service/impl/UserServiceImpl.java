@@ -5,6 +5,7 @@ import com.manager.dto.LoginDTO;
 import com.manager.dto.ProfileDTO;
 import com.manager.dto.ResetPasswordDTO;
 import com.manager.md5.MD5;
+import com.manager.model.Details;
 import com.manager.model.PasswordIssuingCode;
 import com.manager.model.Token;
 import com.manager.model.User;
@@ -12,11 +13,13 @@ import com.manager.repository.PasswordIssuingCodeRepository;
 import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.UserService;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +38,7 @@ import java.util.Properties;
 import java.util.Random;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return new ResponseEntity<>("WRONG_USERNAME_OR_PASSWORD", HttpStatus.OK);
+        return new ResponseEntity<>(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
     }
 
 
@@ -168,9 +172,6 @@ public class UserServiceImpl implements UserService {
             int random = new Random().nextInt();
             String tokenNew = md5.convertToMD5(String.valueOf(random));
             token.setToken(tokenNew);
-            token = tokenRepository.save(token);
-            System.out.println(token.getToken());
-            System.out.println(tokenNew);
         }
         return new ResponseEntity<>(Notifications.LOGOUT_SUCCESS, HttpStatus.OK);
     }
@@ -195,17 +196,9 @@ public class UserServiceImpl implements UserService {
                 long startDate = user.getCreatedDate().getTime();
                 profileDTO.setStartDate(startDate);
             }
-            if (user.getPosition() == 1) {
-                profileDTO.setPosition("DEV");
-            } else if (user.getPosition() == 2) {
-                profileDTO.setPosition("Manager");
-            } else if (user.getPosition() == 3) {
-                profileDTO.setPosition("Admin");
-            } else if (user.getPosition() == 4) {
-                profileDTO.setPosition("Accountant");
-            } else {
-                profileDTO.setPosition("Employee");
-            }
+            try {
+                profileDTO.setPosition(Details.positions[user.getPosition()]);
+            }catch (ArrayIndexOutOfBoundsException arrE){}
         }
         return new ResponseEntity<>(profileDTO, HttpStatus.OK);
     }
@@ -214,15 +207,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
         String code = request.getHeader("access_Token");
-        if (code == null) {
-            return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
-        }
         if (profileDTO.getPhoneNumber().length() > 10) {
             return new ResponseEntity("LENGTH_OF_PHONE_NUMBER_10", HttpStatus.OK);
         }
         try {
             System.out.println(profileDTO.getPhoneNumber().length());
-            long number = Integer.parseInt(profileDTO.getPhoneNumber());
+            long number = Long.parseLong(profileDTO.getPhoneNumber());
         } catch (NumberFormatException e) {
             return new ResponseEntity("NUMBER_FORMAT_EXCEPTION", HttpStatus.OK);
         }
@@ -238,7 +228,7 @@ public class UserServiceImpl implements UserService {
         user.setPicture(profileDTO.getAvatar());
         profileDTO.setEmail(user.getEmail());
         profileDTO.setAvatar(user.getPicture());
-        userRepository.save(user);
+//        userRepository.save(user);
         return new ResponseEntity(profileDTO, HttpStatus.OK);
 
     }
@@ -255,7 +245,7 @@ public class UserServiceImpl implements UserService {
             if (resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getNewPassword1())) {
                 String convertNewPassword = md5.convertToMD5(resetPasswordDTO.getNewPassword());
                 user.setPassword(convertNewPassword);
-                userRepository.save(user);
+//                userRepository.save(user);
                 return new ResponseEntity(Notifications.COMPLETE, HttpStatus.OK);
             } else {
                 return new ResponseEntity(Notifications.PASSWORD_INCORRECT, HttpStatus.OK);
@@ -290,7 +280,7 @@ public class UserServiceImpl implements UserService {
                 try {
                     multipartFile.transferTo(file);
                     user.setPicture(filePath);
-                    userRepository.save(user);
+//                    userRepository.save(user);
                     return new ResponseEntity(filePath, HttpStatus.OK);
                 } catch (IOException e) {
                     e.printStackTrace();
