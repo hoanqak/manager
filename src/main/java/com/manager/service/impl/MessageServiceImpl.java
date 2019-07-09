@@ -105,6 +105,7 @@ public class MessageServiceImpl implements MessageService {
 
     public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
         MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
+        messageDemoDTO.setId(messageDemo.getId());
         messageDemoDTO.setContent(messageDemo.getContent());
         messageDemoDTO.setTitle(messageDemo.getTitle());
         messageDemoDTO.setTo(messageDemo.getTo().getName());
@@ -143,21 +144,14 @@ public class MessageServiceImpl implements MessageService {
             LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }else if(checkInOut != null && messageDemo.getType() == 0){
-            BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
-                @Override
-                protected void configure() {
-                    mapping(CheckInOut.class, CheckInOutDTO.class).fields("id", "id").fields("dayCheckIn", "dayCheckIn")
-                            .fields("startTime", "checkIn").fields("endTime", "checkOut").fields("user.name", "name")
-                            .fields("totalTime", "total");
-                }
-            };
-
+            BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
             DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
             dozerBeanMapper.addMapping(beanMappingBuilder);
             CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
             return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
         }
         else{
+            messageDemoRepository.delete(messageDemo);
             return new ResponseEntity(Notifications.MESSAGE_NOT_EXITS, HttpStatus.BAD_REQUEST);
         }
     }
@@ -184,7 +178,7 @@ public class MessageServiceImpl implements MessageService {
             leaveApplication.setStatus("accept");
 
         } else if (accept == 0) {
-            messageReply.setTitle(user.getName() + " not accepted leave application of me");
+            messageReply.setTitle(user.getName() + " not accept leave application of me");
             leaveApplication.setStatus("not accept");
         } else {
             return new ResponseEntity("ERROR", HttpStatus.BAD_REQUEST);
@@ -195,7 +189,7 @@ public class MessageServiceImpl implements MessageService {
         messageDemo.setStatus(true);
         messageDemoRepository.save(messageDemo);
         messageDemoRepository.save(messageReply);
-        leaveApplicationRepository.save(leaveApplication);
+//        leaveApplicationRepository.save(leaveApplication);
         LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
         return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
     }

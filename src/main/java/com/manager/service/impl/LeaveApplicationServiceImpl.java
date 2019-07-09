@@ -3,10 +3,7 @@ package com.manager.service.impl;
 import com.manager.data.Notifications;
 import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.RequestADayOffDTO;
-import com.manager.model.LeaveApplication;
-import com.manager.model.MessageDemo;
-import com.manager.model.Token;
-import com.manager.model.User;
+import com.manager.model.*;
 import com.manager.repository.*;
 import com.manager.service.LeaveApplicationService;
 import org.dozer.DozerBeanMapper;
@@ -31,6 +28,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private LeaveApplicationRepository leaveApplicationRepository;
 
@@ -93,14 +91,12 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(month, idUser);
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
 		leaveApplicationList.forEach(leaveApplication -> {
-
 			BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
 				@Override
 				protected void configure() {
 					mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "fromDate").fields("endTime", "toDate");
 				}
 			};
-
 			DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
 			dozerBeanMapper.addMapping(beanMappingBuilder);
 			LeaveApplicationDTO leaveApplicationDTO1 = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
@@ -109,14 +105,21 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		});
 		return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
 	}
-
 	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
 		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
+		leaveApplicationDTO.setId(leaveApplication.getId());
 		leaveApplicationDTO.setName(leaveApplication.getUser().getName());
+		leaveApplicationDTO.setReason(leaveApplication.getReason());
+		leaveApplicationDTO.setStatus(leaveApplication.getStatus());
 		long fromDate = leaveApplication.getStartTime().getTime();
 		long toDate = leaveApplication.getEndTime().getTime();
 		leaveApplicationDTO.setStartTime(fromDate);
 		leaveApplicationDTO.setEndTime(toDate);
+		try {
+			leaveApplicationDTO.setPosition(Details.positions[leaveApplication.getUser().getPosition()]);
+		}catch (ArrayIndexOutOfBoundsException arrEx){
+			arrEx.printStackTrace();
+		}
 		return leaveApplicationDTO;
 	}
 

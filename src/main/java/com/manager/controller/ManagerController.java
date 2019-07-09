@@ -44,48 +44,6 @@ public class ManagerController {
 		return message.getAllMessageUnreadPage(request, page, size);
 	}
 
-  /*  //tick is watched all message
-    @PostMapping("/readAll")
-    public ResponseEntity readMessage(HttpServletRequest request) {
-        return message.readAll(request);
-    }*/
-
-	/*@PostMapping("/process/{idLeaveApplication}/{accept}")
-	public ResponseEntity processLeaveApplication(@PathVariable("idLeaveApplication") int id, @PathVariable("accept") int accept, HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
-		Token token = tokenRepository.getTokenByCode(code);
-		User user = userRepository.getUserById(token.getId());
-		LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(id);
-		if(leaveApplication != null){
-			if(accept >= 1){
-				System.out.println("vao day roi");
-				User userTo = leaveApplication.getUser();
-				System.out.println(userTo.getName());
-				leaveApplication.setStatus("accept");
-				MessageDemo messageDemo = new MessageDemo();
-				messageDemo.setFrom(user);
-				messageDemo.setTitle(user.getName() +" da chap nhan don xin nghi phep");
-				messageDemo.setTo(userTo);
-				messageDemo.setIdReport(leaveApplication.getId());
-				messageDemoRepository.save(messageDemo);
-				return new ResponseEntity("ACCEPT", HttpStatus.OK);
-			}else{
-				leaveApplication.setStatus("not accept");
-				User userTo = leaveApplication.getUser();
-				System.out.println(userTo.getName());
-				MessageDemo messageDemo = new MessageDemo();
-				messageDemo.setFrom(user);
-				messageDemo.setTitle(user.getName() +" khong chap nhan don xin nghi phep");
-				messageDemo.setTo(userTo);
-				messageDemo.setIdReport(leaveApplication.getId());
-				messageDemoRepository.save(messageDemo);
-				return new ResponseEntity("NOT_ACCEPT", HttpStatus.OK);
-			}
-		}
-		return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.OK);
-	}
-*/
-
 	//read a message
 	@GetMapping("/readMessage/{id}")
 	public ResponseEntity readAMessage(@PathVariable("id") int id, HttpServletRequest request) {

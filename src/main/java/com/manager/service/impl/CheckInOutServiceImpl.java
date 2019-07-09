@@ -18,12 +18,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@Transactional
 public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Autowired
@@ -271,9 +273,9 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 			@Override
 			protected void configure() {
 				mapping(CheckInOut.class, CheckInOutDTO.class).fields("id", "id").fields("dayCheckIn", "dayCheckIn")
-						.fields("startTime", "checkIn").fields("endTime", "checkOut")
-						.fields("totalTime", "total");
-				mapping(User.class, CheckInOutDTO.class).fields("name", "name");
+						.fields("totalTime", "totalTime").exclude("user").fields("user.id","id_user");
+
+				mapping(User.class, CheckInOutDTO.class).fields("name", "name").fields("position", "position");;
 			}
 		};
 
