@@ -1,4 +1,4 @@
-package com.manager.service.Impl;
+package com.manager.service.impl;
 
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.LeaveApplicationDTO;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import sun.awt.image.ImageWatched;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;

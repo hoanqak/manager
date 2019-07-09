@@ -1,4 +1,4 @@
-package com.manager.service.Impl;
+package com.manager.service.impl;
 
 import com.manager.dto.LoginDTO;
 import com.manager.dto.ProfileDTO;

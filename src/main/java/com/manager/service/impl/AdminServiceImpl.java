@@ -1,4 +1,4 @@
-package com.manager.service.Impl;
+package com.manager.service.impl;
 
 import com.manager.dto.UserDTO;
 import com.manager.model.CheckInOut;
