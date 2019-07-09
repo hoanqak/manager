@@ -99,7 +99,12 @@ public class AdminServiceImpl implements AdminService {
 			workingDayDTO.setUserId(user.getId());
 			workingDayDTO.setName(user.getName());
 			workingDayDTO.setPosition(user.getPosition());
-//			workingDayDTO.setTotal();
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(startDate);
+			int month = calendar.get(Calendar.MONTH);
+			workingDayDTO.setMonth(month);
+
 //			chuyển từ List sang Map trong Java 8.
 //			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
 			Map<String, Integer> days = new HashMap<>();
