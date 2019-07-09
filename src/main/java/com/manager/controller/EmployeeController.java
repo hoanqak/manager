@@ -1,39 +1,34 @@
 package com.manager.controller;
 
 import com.manager.dto.*;
-import com.manager.model.*;
-import com.manager.repository.*;
+import com.manager.model.LeaveApplication;
 import com.manager.service.CheckInOutService;
-import com.manager.service.Impl.LeaveApplicationServiceImpl;
-import com.manager.service.Impl.MessageServiceImpl;
+import com.manager.service.LeaveApplicationService;
+import com.manager.service.MessageService;
 import com.manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
-public class EmployeeController{
+public class EmployeeController {
 
 	@Autowired
-	private UserService userService;
+	UserService userService;
 
 	@Autowired
-	private LeaveApplicationServiceImpl leaveApplicationService;
+	LeaveApplicationService leaveApplicationService;
 
 	@Autowired
-	private CheckInOutService checkInOutService;
+	CheckInOutService checkInOutService;
+
 	@Autowired
-	MessageServiceImpl message;
+	MessageService message;
 
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO,
@@ -101,7 +96,7 @@ public class EmployeeController{
 
 	//get all list check in check out
 	@GetMapping("/checkInOuts/{page}/{size}")
-	public ResponseEntity test(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
+	public ResponseEntity test(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
 		return checkInOutService.getCheckInOutAndPage(page, size, request);
 	}
 
@@ -119,7 +114,7 @@ public class EmployeeController{
 
 	//read a message
 	@PostMapping("/readMessage/{id}")
-	public ResponseEntity readMessage(@PathVariable("id") int id, HttpServletRequest request){
+	public ResponseEntity readMessage(@PathVariable("id") int id, HttpServletRequest request) {
 		return message.readAMessage(id, request);
 	}
 
@@ -128,6 +123,7 @@ public class EmployeeController{
 	public ResponseEntity requestADayOff(@RequestBody LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
 		return leaveApplicationService.requestADayOff(leaveApplicationDTO, request);
 	}
+
 	//get leave application by month
 	@GetMapping("/listDayOff/{month}")
 	public ResponseEntity<List<LeaveApplication>> listDayOff(@PathVariable("month") int month, HttpServletRequest request) {
@@ -136,11 +132,12 @@ public class EmployeeController{
 
 	//get list leave application with page and size
 	@GetMapping("/listDayOff/{page}/{size}")
-	public ResponseEntity listDayOffPage(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
+	public ResponseEntity listDayOffPage(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
 		return leaveApplicationService.listDayOffPage(page, size, request);
 	}
+
 	@GetMapping("/messages/{page}/{size}")
-	public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
+	public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
 		return message.messages(page, size, request);
 	}
 
