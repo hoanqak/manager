@@ -1,6 +1,5 @@
 package com.manager.service.Impl;
 
-import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.UserDTO;
 import com.manager.model.CheckInOut;
 import com.manager.model.TotalWorkingDay;
@@ -8,7 +7,6 @@ import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
-import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +27,6 @@ public class AdminServiceImpl implements AdminService {
 	UserRepository userRepository;
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
-	@Autowired
-	CheckInOutService checkInOutService;
 
 	//	mapping model
 	DozerBeanMapper mapper = new DozerBeanMapper();
@@ -102,10 +98,6 @@ public class AdminServiceImpl implements AdminService {
 			workingDayDTO.setUserId(user.getId());
 			workingDayDTO.setName(user.getName());
 			workingDayDTO.setPosition(user.getPosition());
-
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(startDate);
-			workingDayDTO.setMonth(calendar.get(Calendar.MONTH));
 //			workingDayDTO.setTotal();
 //			chuyển từ List sang Map trong Java 8.
 //			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
@@ -124,16 +116,6 @@ public class AdminServiceImpl implements AdminService {
 		}
 		return list;
 	}
-
-//	@Override
-//	public ResponseEntity updateACheckInOut(int id, CheckInOutDTO checkInOutDTO) {
-//		CheckInOut checkInOut = checkInOutRepository.getOne(id);
-//		checkInOut.setStartTime(new Date(checkInOutDTO.getStartTime()));
-//		checkInOut.setEndTime(new Date(checkInOutDTO.getEndTime()));
-//
-////		update(Date checkin, Date checkout)
-//		return null;
-//	}
 
 	public String date2String(Date date) {
 		Calendar calendar = Calendar.getInstance();
