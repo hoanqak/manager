@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 
@@ -27,9 +29,11 @@ public class LeaveApplication {
     @Column
     private String reason;
     private String status;
+    @CreationTimestamp
     @Column(name = "created_time")
     private Date createdTime;
     @Column(name = "updated_time")
+    @UpdateTimestamp
     private Date updatedTime;
     @ManyToOne
     @JoinColumn(name = "id_user")

@@ -4,7 +4,12 @@ import com.manager.dto.*;
 import com.manager.model.*;
 import com.manager.repository.*;
 import com.manager.service.LeaveApplicationService;
+import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,7 +37,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     @Autowired
     CheckInOutRepository checkInOutRepository;
 
-    public ResponseEntity<RequestADayOffDTO> requestADayOff(RequestADayOffDTO requestADayOffDTO, HttpServletRequest request) {
+    public ResponseEntity<RequestADayOffDTO> requestADayOff(LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
         String codeToken = request.getHeader("access_Token");
         if (codeToken == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
@@ -43,13 +48,13 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             Calendar calendarFromDate = Calendar.getInstance();
             Calendar calendarToDate = Calendar.getInstance();
 
-            calendarFromDate.setTimeInMillis(requestADayOffDTO.getFromDate());
-            calendarToDate.setTimeInMillis(requestADayOffDTO.getToDate());
+            calendarFromDate.setTimeInMillis(leaveApplicationDTO.getStartTime());
+            calendarToDate.setTimeInMillis(leaveApplicationDTO.getEndTime());
 
             LeaveApplication leaveApplication = new LeaveApplication();
             leaveApplication.setStartTime(calendarFromDate.getTime());
             leaveApplication.setEndTime(calendarToDate.getTime());
-            leaveApplication.setReason(requestADayOffDTO.getReason());
+            leaveApplication.setReason(leaveApplicationDTO.getReason());
             leaveApplication.setStatus("pending");
             leaveApplication.setUser(user);
 
@@ -59,26 +64,45 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             messageDemo.setTitle("User: " + user.getId() + "(" + user.getName() + ") request a day off");
             messageDemo.setStatus(false);
             messageDemo.setFrom(user);
-            messageDemo.setType(2);
+            //type = 1: leave application
+            // type = 0: edit checkinout
+            messageDemo.setType(1);
+
+            //send to all manager(role 3)
             userRepository.getRoleUser(3).forEach(user1 -> {
                 messageDemo.setTo(user1);
                 messageDemoRepository.save(messageDemo);
             });
-            return new ResponseEntity(requestADayOffDTO, HttpStatus.OK);
+            return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }
         return new ResponseEntity("ERROR_REQUEST", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<LeaveApplication>> listDayOff(ListADayOffDTO listADayOffDTO, HttpServletRequest request) {
+    public ResponseEntity<List<LeaveApplication>> listDayOff(int month, HttpServletRequest request) {
         String code = request.getHeader("access_Token");
         if (code == null) {
             return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
         }
         Token token1 = tokenRepository.getTokenByCode(code);
         int idUser = token1.getId();
-        int month = listADayOffDTO.getMonth();
         List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(month, idUser);
-        return new ResponseEntity<>(leaveApplicationList, HttpStatus.OK);
+        List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
+        leaveApplicationList.forEach(leaveApplication -> {
+
+            BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+                @Override
+                protected void configure() {
+                    mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "fromDate").fields("endTime", "toDate");
+                }
+            };
+
+            DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+            dozerBeanMapper.addMapping(beanMappingBuilder);
+            LeaveApplicationDTO leaveApplicationDTO1 = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
+            leaveApplicationDTOS.add(leaveApplicationDTO1);
+
+        });
+        return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
     }
 
     public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
@@ -86,8 +110,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
         leaveApplicationDTO.setName(leaveApplication.getUser().getName());
         long fromDate = leaveApplication.getStartTime().getTime();
         long toDate = leaveApplication.getEndTime().getTime();
-        leaveApplicationDTO.setFromDate(fromDate);
-        leaveApplicationDTO.setToDate(toDate);
+        leaveApplicationDTO.setStartTime(fromDate);
+        leaveApplicationDTO.setEndTime(toDate);
         return leaveApplicationDTO;
     }
 
@@ -100,37 +124,19 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
         return new ResponseEntity<List<LeaveApplicationDTO>>(leaveApplicationDTOS, HttpStatus.OK);
     }
 
-    public ResponseEntity<Object> viewMessage(RequestMessageDTO requestMessageDTO) {
-        System.out.println("Type: " + requestMessageDTO.getType());
-        if (requestMessageDTO.getType() == 1) {
-            LeaveApplication leaveApplication = leaveApplicationRepository.findById(requestMessageDTO.getIdCheckInOut()).get();
-            if(leaveApplication == null){
-                return new ResponseEntity<>("MESSAGE_NOT_EXITS", HttpStatus.NOT_FOUND);
-            }
-            LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
-            leaveApplicationDTO.setName(leaveApplication.getUser().getName());
-            leaveApplicationDTO.setReason(leaveApplication.getReason());
-            leaveApplicationDTO.setToDate(leaveApplication.getStartTime().getTime());
-            leaveApplicationDTO.setFromDate(leaveApplication.getEndTime().getTime());
-            System.out.println(leaveApplication.getReason());
-            return new ResponseEntity<Object>(leaveApplicationDTO, HttpStatus.OK);
-        } else if (requestMessageDTO.getType() == 0) {
-            CheckInOut checkInOut = checkInOutRepository.getOne(requestMessageDTO.getIdCheckInOut());
-            if(checkInOut == null){
-                return new ResponseEntity<>("MESSAGE_NOT_EXITS", HttpStatus.NOT_FOUND);
-            }
-            System.out.println(checkInOut.getStartTime());
-            CheckInOutDTO checkInOutDTO = new CheckInOutDTO();
-            checkInOutDTO.setStartTime(checkInOut.getStartTime().getTime());
-            checkInOutDTO.setEndTime(checkInOut.getEndTime().getTime());
-            checkInOutDTO.setId(checkInOutDTO.getId());
-            checkInOutDTO.setUser(checkInOut.getUser());
-            checkInOutDTO.setTotalTime(checkInOut.getTotalTime());
-            return new ResponseEntity<Object>(checkInOutDTO, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Object>("MESSAGE_NOT_EXITS", HttpStatus.OK);
-        }
+    public ResponseEntity listDayOffPage(int page, int size, HttpServletRequest request){
+        String code = request.getHeader("access_Token");
+        Token token = tokenRepository.getTokenByCode(code);
+        User user = userRepository.getUserById(token.getId());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<LeaveApplication> leaveApplicationPage = leaveApplicationRepository.getLeaveApplicationByPage(pageable, user);
+
+        List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
+        leaveApplicationPage.getContent().forEach(leaveApplication ->{
+            LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
+            leaveApplicationDTOS.add(leaveApplicationDTO);
+        });
+
+        return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
     }
-
-
 }

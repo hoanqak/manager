@@ -12,10 +12,11 @@ import lombok.Setter;
 public class MessageDemoDTO {
 	private int id;
 	private boolean status;
-	private String message;
+	private String title;
 	private String type;
 	private long timeRequest;
 	private String content;
 	private String from;
 	private String to;
+	private int idRecord;
 }

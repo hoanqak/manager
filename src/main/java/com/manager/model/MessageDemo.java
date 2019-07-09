@@ -20,7 +20,8 @@ public class MessageDemo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column
+    @Getter
+    @Column(name = "status")
     private boolean status;
     @Column(name="title")
     private String title;
@@ -39,6 +40,9 @@ public class MessageDemo {
     @JoinColumn(name = "send_to")
     private User to;
 
+    public boolean getStatus(){
+        return this.status;
+    }
     public MessageDemo(String title, int type, String content, User from, User to) {
         this.title = title;
         this.type = type;

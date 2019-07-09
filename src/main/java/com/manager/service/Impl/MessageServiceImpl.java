@@ -1,55 +1,70 @@
 package com.manager.service.Impl;
 
+import com.manager.dto.CheckInOutDTO;
+import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.MessageDemoDTO;
 import com.manager.dto.RequestMessageDTO;
-import com.manager.model.MessageDemo;
-import com.manager.model.Token;
-import com.manager.model.User;
-import com.manager.repository.MessageDemoRepository;
-import com.manager.repository.TokenRepository;
-import com.manager.repository.UserRepository;
+import com.manager.model.*;
+import com.manager.repository.*;
 import com.manager.service.MessageService;
+import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sun.awt.image.ImageWatched;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
+
 @Service
 @Transactional
 public class MessageServiceImpl implements MessageService {
 
-	@Autowired
-	UserRepository userRepository;
-	@Autowired
-	TokenRepository tokenRepository;
-	@Autowired
-	MessageDemoRepository messageDemoRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    TokenRepository tokenRepository;
+    @Autowired
+    MessageDemoRepository messageDemoRepository;
+    @Autowired
+    LeaveApplicationRepository leaveApplicationRepository;
 
-	public User getUser(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
-		Token token = tokenRepository.getTokenByCode(code);
-		User user = userRepository.getUserById(token.getId());
-		return user;
-	}
+    @Autowired
+    CheckInOutRepository checkInOutRepository;
+    //get user with token
+    public User getUser(HttpServletRequest request) {
+        String code = request.getHeader("access_Token");
+        Token token = tokenRepository.getTokenByCode(code);
+        User user = userRepository.getUserById(token.getId());
+        return user;
+    }
 
-	public RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
-		User user = getUser(request);
-		if (requestMessageDTO.getType() == 0) {
-			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setTitle("ID: " + "(" + user.getName() + ")" + " Request edit checkin time");
-			messageDemo.setContent(requestMessageDTO.getContent());
-			messageDemo.setFrom(user);
-			messageDemo.setType(0);
-			messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
-			userRepository.getRoleUser(2).forEach(user1 ->{
-				messageDemo.setTo(user1);
-				messageDemoRepository.save(messageDemo);
-			});
-		} else if (requestMessageDTO.getType() == 1) {
+    public RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
+        User user = getUser(request);
+        if (requestMessageDTO.getType() == 0) {
+            MessageDemo messageDemo = new MessageDemo();
+            messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
+            messageDemo.setTitle("User: " + "(" + user.getName() + ")" + " Request edit checkInOut time");
+            messageDemo.setContent(requestMessageDTO.getContent());
+            messageDemo.setFrom(user);
+            messageDemo.setType(0);
+            messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
+
+            //send for admin
+            userRepository.getRoleUser(2).forEach(user1 -> {
+                System.out.println(user1.toString());
+                messageDemo.setTo(user1);
+                messageDemoRepository.save(messageDemo);
+            });
+        }
+		/* else if (requestMessageDTO.getType() == 1) {
 			MessageDemo messageDemo = new MessageDemo();
 			messageDemo.setTitle("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
 			messageDemo.setContent(requestMessageDTO.getContent());
@@ -60,46 +75,143 @@ public class MessageServiceImpl implements MessageService {
 				messageDemo.setTo(user1);
 				messageDemoRepository.save(messageDemo);
 			}
-		}
-		return requestMessageDTO;
-	}
+		}*/
+        return requestMessageDTO;
+    }
 
-	public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request) {
-		User user = getUser(request);
-		List<MessageDemoDTO> messageDemoDTOList = new LinkedList<MessageDemoDTO>();
-		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndTo(false, user)) {
-			MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
-			messageDemoDTOList.add(messageDemoDTO);
-		}
-		return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
+    public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request, int type) {
+        User user = getUser(request);
+        List<MessageDemoDTO> messageDemoDTOList = new LinkedList<MessageDemoDTO>();
+        for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndToAndType(false, user, type)) {
+            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            messageDemoDTOList.add(messageDemoDTO);
+        }
+        return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
 
-	}
+    }
 
-	public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
-		MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
-		messageDemoDTO.setContent(messageDemo.getContent());
-		messageDemoDTO.setMessage(messageDemo.getTitle());
-		messageDemoDTO.setTo(messageDemo.getTo().getName());
-		messageDemoDTO.setFrom(messageDemo.getFrom().getName());
-		if(messageDemo.getType() == 0){
-			messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
-		}else if(messageDemo.getType() == 1){
-			messageDemoDTO.setType("REQUEST_A_DAY_OFF");
-		}else if(messageDemo.getType() == -1){
-			messageDemoDTO.setType("REQUEST_EDIT_CHECKOUT");
-		}
-		messageDemoDTO.setId(messageDemo.getId());
-		long time = messageDemo.getTimeRequest().getTime();
-		messageDemoDTO.setTimeRequest(time);
+    public ResponseEntity<List<MessageDemoDTO>> getAllMessageUnreadPage(HttpServletRequest request, int page, int size) {
+        User user = getUser(request);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MessageDemo> pageMessageDemo = messageDemoRepository.getAllMessageByStatusAndToAndTypePage(pageable, false, user);
+        List<MessageDemoDTO> messageDemoDTOList = new LinkedList<>();
+        pageMessageDemo.getContent().forEach(messageDemo -> {
+            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            messageDemoDTOList.add(messageDemoDTO);
+        });
 
-		return messageDemoDTO;
-	}
+        return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
+    }
 
-	public ResponseEntity readAll(HttpServletRequest request) {
-		User user = getUser(request);
-		for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndTo(false, user)) {
-			messageDemo.setStatus(true);
-		}
-		return new ResponseEntity(true, HttpStatus.OK);
-	}
+    public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
+        MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
+        messageDemoDTO.setContent(messageDemo.getContent());
+        messageDemoDTO.setTitle(messageDemo.getTitle());
+        messageDemoDTO.setTo(messageDemo.getTo().getName());
+        messageDemoDTO.setFrom(messageDemo.getFrom().getName());
+        messageDemoDTO.setStatus(messageDemo.getStatus());
+        if (messageDemo.getType() == 0) {
+            messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
+        } else if (messageDemo.getType() == 1) {
+            messageDemoDTO.setType("REQUEST_A_DAY_OFF");
+        } else if (messageDemo.getType() == -1) {
+            messageDemoDTO.setType("REQUEST_EDIT_CHECKOUT");
+        }
+        messageDemoDTO.setIdRecord(messageDemo.getIdReport());
+        messageDemoDTO.setId(messageDemo.getId());
+        long time = messageDemo.getTimeRequest().getTime();
+        messageDemoDTO.setTimeRequest(time);
+        return messageDemoDTO;
+    }
+
+    public ResponseEntity readAll(HttpServletRequest request) {
+        User user = getUser(request);
+        for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndToAndType(false, user, 1)) {
+            messageDemo.setStatus(true);
+        }
+        return new ResponseEntity(true, HttpStatus.OK);
+    }
+
+    public ResponseEntity readAMessage(int id, HttpServletRequest request) {
+        User user = getUser(request);
+        MessageDemo messageDemo = messageDemoRepository.getMessageDemoByToAndId(user, id);
+        if (messageDemo == null) {
+            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+        }
+        CheckInOut checkInOut = checkInOutRepository.getCheckInOutById(messageDemo.getIdReport());
+        LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(messageDemo.getIdReport());
+        if(leaveApplication != null && messageDemo.getType() == 1) {
+            messageDemo.setStatus(true);
+            LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
+            return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
+        }else if(checkInOut != null && messageDemo.getType() == 0){
+            BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+                @Override
+                protected void configure() {
+                    mapping(CheckInOut.class, CheckInOutDTO.class).fields("id", "id").fields("dayCheckIn", "dayCheckIn")
+                            .fields("startTime", "checkIn").fields("endTime", "checkOut").fields("user.name", "name")
+                            .fields("totalTime", "total");
+                }
+            };
+
+            DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+            dozerBeanMapper.addMapping(beanMappingBuilder);
+            CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
+            return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity processLeaveApplication(int id, int accept, HttpServletRequest request) {
+        User user = getUser(request);
+        MessageDemo messageDemo = messageDemoRepository.getMessageDemoByToAndId(user, id);
+        if (messageDemo == null) {
+            return new ResponseEntity("MESSAGE_NOT_EXITS", HttpStatus.BAD_REQUEST);
+        }
+
+        // get id of leave application
+        int idLeaveApplication = messageDemo.getIdReport();
+        LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(idLeaveApplication);
+        if (leaveApplication == null) {
+            return new ResponseEntity("LEAVE_APPLICATION_NOT_EXITS", HttpStatus.BAD_REQUEST);
+        }
+        //reply result to sender
+        MessageDemo messageReply = new MessageDemo();
+        messageReply.setFrom(user);
+        messageReply.setTo(messageDemo.getFrom());
+        if (accept == 1) {
+            messageReply.setTitle(user.getName() + " accepted leave application of me");
+            leaveApplication.setStatus("accept");
+
+        } else if (accept == 0) {
+            messageReply.setTitle(user.getName() + " not accepted leave application of me");
+            leaveApplication.setStatus("not accept");
+        } else {
+            return new ResponseEntity("ERROR", HttpStatus.BAD_REQUEST);
+        }
+        messageReply.setStatus(false);
+        messageReply.setIdReport(idLeaveApplication);
+        messageReply.setType(1);
+        messageDemo.setStatus(true);
+        messageDemoRepository.save(messageDemo);
+        messageDemoRepository.save(messageReply);
+        leaveApplicationRepository.save(leaveApplication);
+        LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
+        return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
+    }
+
+    public ResponseEntity messages(int size, int page, HttpServletRequest request){
+        Pageable pageable = PageRequest.of(size, page);
+        User user = getUser(request);
+        List<MessageDemoDTO> messageDemoDTOList = new LinkedList<>();
+        Page<MessageDemo> pageMessage = messageDemoRepository.getMessageDemoByTo(pageable, user);
+        pageMessage.getContent().forEach(messageDemo -> {
+            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            messageDemoDTOList.add(messageDemoDTO);
+        });
+
+        return new ResponseEntity(messageDemoDTOList, HttpStatus.OK);
+    }
 }

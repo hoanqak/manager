@@ -1,9 +1,8 @@
 package com.manager.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.manager.dto.UserDTO;
+import com.manager.md5.MD5;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,6 +14,8 @@ import java.util.Date;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+
 public class User {
 
     @Id
