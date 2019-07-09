@@ -1,10 +1,13 @@
 package com.manager.service.Impl;
 
+import com.manager.model.TotalWorkingDay;
 import com.manager.dto.UserDTO;
+import com.manager.model.CheckInOut;
 import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,17 +16,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
+
+	//	mapping model
+	DozerBeanMapper mapper = new DozerBeanMapper();
+
 
 	@Override
 	public ResponseEntity getAllUserInPage(int pageNumber, int pageSize) {
@@ -33,11 +41,14 @@ public class AdminServiceImpl implements AdminService {
 
 		List<User> userList = page.getContent();
 		List<UserDTO> userDTOS = new ArrayList<>();
-		for (User user : userList
-		) {
-			UserDTO userDTO = new UserDTO(user);
+
+//		forEach() Java 8
+		userList.forEach(user -> {
+			UserDTO userDTO = mapper.map(user, UserDTO.class);
 			userDTOS.add(userDTO);
-		}
+
+		});
+
 		return ResponseEntity.ok(userDTOS);
 	}
 
@@ -62,7 +73,6 @@ public class AdminServiceImpl implements AdminService {
 		user.setRole(userDTO.getRole());
 		user.setUpdatedDate(new Date(userDTO.getUpdatedDate()));
 
-		userRepository.save(user);
 		return new ResponseEntity("UPDATE_USER_SUCCESS", HttpStatus.OK);
 
 	}
@@ -71,7 +81,46 @@ public class AdminServiceImpl implements AdminService {
 	public ResponseEntity getUserByIdToEditPage(int id) {
 		User user = userRepository.findUserById(id);
 		if (user == null) return new ResponseEntity("USER_DOESNT_EXISTS", HttpStatus.OK);
-		UserDTO userDTO = new UserDTO(user);
+
+		UserDTO userDTO = mapper.map(user, UserDTO.class);
 		return new ResponseEntity(userDTO, HttpStatus.OK);
+	}
+
+	@Override
+	public List<TotalWorkingDay> getTotalCheckInInMonth(Date startDate, Date endDate) {
+		List<TotalWorkingDay> list = new ArrayList<>();
+		List<CheckInOut> checkInOuts;
+//		List lấy ra toàn bộ danh sách nhân viên trong công ty.
+		List<User> users = userRepository.findAll();
+
+		for (User user : users) {
+			checkInOuts = checkInOutRepository.getListCheckInOutsByDayCheckInAndUserId(startDate, endDate, user.getId());
+			TotalWorkingDay workingDayDTO = new TotalWorkingDay();
+			workingDayDTO.setUserId(user.getId());
+			workingDayDTO.setName(user.getName());
+			workingDayDTO.setPosition(user.getPosition());
+//			workingDayDTO.setTotal();
+//			chuyển từ List sang Map trong Java 8.
+//			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
+			Map<String, Integer> days = new HashMap<>();
+			for(CheckInOut checkInOut : checkInOuts){
+				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
+			}
+			double total = 0;
+			for(CheckInOut checkInOut : checkInOuts){
+				total += checkInOut.getTotalTime();
+			}
+			total = total/8;
+			workingDayDTO.setTotal(total);
+			workingDayDTO.setDays(days);
+			list.add(workingDayDTO);
+		}
+		return list;
+	}
+
+	public String date2String(Date date){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1);
 	}
 }

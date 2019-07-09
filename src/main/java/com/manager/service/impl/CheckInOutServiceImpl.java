@@ -8,6 +8,7 @@ import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.CheckInOutService;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 @Service
 public class CheckInOutServiceImpl implements CheckInOutService {
 
@@ -31,6 +33,8 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 	UserRepository userRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
+
+	DozerBeanMapper mapper = new DozerBeanMapper();
 
 	public boolean compareDate(Date date, Date date1) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -192,6 +196,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		List<CheckInOut> checkInOutList = checkInOutRepository.getListCheckInOutByIdUser(userId);
 		return new ResponseEntity<List<CheckInOut>>(checkInOutList, HttpStatus.OK);
 	}
+
 	@SuppressWarnings("Duplicates")
 	@Override
 	public ResponseEntity pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize) {
@@ -199,9 +204,8 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckIn(pageable, new Date(date));
 		List<CheckInOut> checkInOuts = page.getContent();
 		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
-		for (CheckInOut checkInOut : checkInOuts) {
-			checkInOutDTOS.add(new CheckInOutDTO(checkInOut));
-		}
+
+		checkInOuts.forEach(checkInOut -> checkInOutDTOS.add(mapper.map(checkInOut, CheckInOutDTO.class)));
 		return new ResponseEntity(checkInOutDTOS, HttpStatus.OK);
 	}
 
@@ -209,19 +213,18 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 	@Override
 	public ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckInAndAndUserId(pageable, new Date(startDate), new Date(endDate), idUser);
+		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckInAndUserId(pageable, new Date(startDate), new Date(endDate), idUser);
 		List<CheckInOut> checkInOuts = page.getContent();
 		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
-		for (CheckInOut checkInOut : checkInOuts) {
-			checkInOutDTOS.add(new CheckInOutDTO(checkInOut));
-		}
+		checkInOuts.forEach(checkInOut -> checkInOutDTOS.add(mapper.map(checkInOut, CheckInOutDTO.class)));
+
 		return new ResponseEntity(checkInOutDTOS, HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity getACheckInById(int id) {
 
-		return new ResponseEntity(new CheckInOutDTO(checkInOutRepository.getOne(id)), HttpStatus.OK);
+		return new ResponseEntity(mapper.map(checkInOutRepository.getOne(id), CheckInOutDTO.class), HttpStatus.OK);
 
 	}
 }

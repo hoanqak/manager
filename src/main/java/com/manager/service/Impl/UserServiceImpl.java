@@ -187,7 +187,7 @@ public class UserServiceImpl implements UserService {
 			profileDTO.setEmail(user.getEmail());
 			profileDTO.setFullName(user.getName());
 			profileDTO.setPhoneNumber(user.getPhoneNumber());
-			profileDTO.setDateOfBirth(user.getBirthDay().getTime());
+			profileDTO.setDateOfBirth(user.getBirthday().getTime());
 			if (user.getCreatedDate() != null) {
 				long startDate = user.getCreatedDate().getTime();
 				profileDTO.setStartDate(startDate);
@@ -233,7 +233,7 @@ public class UserServiceImpl implements UserService {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(profileDTO.getDateOfBirth());
-		user.setBirthDay(calendar.getTime());
+		user.setBirthday(calendar.getTime());
 		user.setPicture(profileDTO.getAvatar());
 		profileDTO.setEmail(user.getEmail());
 		profileDTO.setAvatar(user.getPicture());

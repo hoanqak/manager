@@ -14,15 +14,15 @@ public class MD5 {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("md5");
             messageDigest.update(input.getBytes());
-            BigInteger bigInteger = new BigInteger(1, messageDigest.digest());
-            return bigInteger.toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            throw new NumberFormatException();
-        }
-    }
+		            BigInteger bigInteger = new BigInteger(1, messageDigest.digest());
+		            return bigInteger.toString(16);
+		            } catch (NoSuchAlgorithmException e) {
+		            throw new NumberFormatException();
+		            }
+		            }
 
-    public static void main(String[] args) {
-        System.out.println(new MD5().convertToMD5("123"));
-        System.out.println(new MD5().convertToMD5("123").length());
-    }
-}
+public static void main(String[] args) {
+		System.out.println(new MD5().convertToMD5("12345"));
+//        System.out.println(new MD5().convertToMD5("123").length());
+		}
+		}

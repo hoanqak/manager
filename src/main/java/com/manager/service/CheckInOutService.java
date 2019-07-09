@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 @Service
 public interface CheckInOutService {
 	ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
@@ -20,4 +21,6 @@ public interface CheckInOutService {
 	ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize);
 
 	ResponseEntity getACheckInById(int id);
+
+
 }

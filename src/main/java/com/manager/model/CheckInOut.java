@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dozer.Mapping;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
