@@ -104,6 +104,15 @@
             <version>5.5.1</version>
         </dependency>
 
+<!--
+        war
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>2.1.6.RELEASE</scope>
+        </dependency>
+-->
+
     </dependencies>
 
     <build>

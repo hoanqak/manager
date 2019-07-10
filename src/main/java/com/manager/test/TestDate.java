@@ -14,11 +14,7 @@ public class TestDate {
 	static CheckInOutRepository checkInOutRepository;
 
 	public static void main(String[] args) throws InterruptedException {
-//		System.out.println(new MD5().convertToMD5("12345678"));
-		Date date = new Date(121212021020200l);
-		System.out.println(date);
-		System.out.println(date2String(date));
-
+		Long.parseLong("4543gfg");
 	}
 
 	public static String date2String(Date date) {

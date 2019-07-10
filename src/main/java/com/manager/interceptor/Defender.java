@@ -18,13 +18,15 @@ public class Defender extends HandlerInterceptorAdapter {
     UserRepository userRepository;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
         System.out.println(code);
         Token token = tokenRepository.getTokenByCode(code);
         if(token != null && userRepository.getUserById(token.getId()) != null){
             return true;
         }
-        response.sendRedirect("/api/v1/notLoggedIn");
+        String path = request.getContextPath();
+        System.out.println(path);
+        response.sendRedirect(path + "/api/v1/notLoggedIn");
         return true;
     }
 }

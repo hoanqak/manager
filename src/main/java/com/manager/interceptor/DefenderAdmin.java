@@ -20,19 +20,21 @@ public class DefenderAdmin extends HandlerInterceptorAdapter {
     UserRepository userRepository;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
+        String path = request.getContextPath();
+
         Token token = tokenRepository.getTokenByCode(code);
         if(token != null){
             User user = userRepository.getUserById(token.getId());
             if(user != null && user.getRole() == 0){
-                response.sendRedirect("/api/v1/yourNotAdmin");
+                response.sendRedirect(path+"/api/v1/yourNotAdmin");
                 return true;
             }
             else{
                 return true;
             }
         }
-        response.sendRedirect("/api/v1/notLoggedIn");
+        response.sendRedirect(path + "/api/v1/notLoggedIn");
         return true;
     }
 }

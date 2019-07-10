@@ -41,7 +41,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 	CheckInOutRepository checkInOutRepository;
 
 	public ResponseEntity<RequestADayOffDTO> requestADayOff(LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
-		String codeToken = request.getHeader("access_Token");
+		String codeToken = request.getHeader("token");
 		if (codeToken == null) {
 			return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
 		}
@@ -53,6 +53,10 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 			calendarFromDate.setTimeInMillis(leaveApplicationDTO.getStartTime());
 			calendarToDate.setTimeInMillis(leaveApplicationDTO.getEndTime());
+
+			if(leaveApplicationDTO.getStartTime() > leaveApplicationDTO.getEndTime()){
+				return new ResponseEntity("ERROR_STARTDATE_AND_ENDDATE", HttpStatus.BAD_REQUEST);
+			}
 
 			LeaveApplication leaveApplication = new LeaveApplication();
 			leaveApplication.setStartTime(calendarFromDate.getTime());
@@ -82,7 +86,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 	}
 
 	public ResponseEntity<List<LeaveApplication>> listDayOff(int month, HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		if (code == null) {
 			return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
 		}
@@ -133,7 +137,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 	}
 
 	public ResponseEntity listDayOffPage(int page, int size, HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		User user = userRepository.getUserById(token.getId());
 		Pageable pageable = PageRequest.of(page, size);

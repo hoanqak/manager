@@ -37,7 +37,6 @@ public class AdminController {
 
 	@PostMapping("/users/")
 	public ResponseEntity createUser(@RequestBody UserDTO userDTO) {
-
 		DozerBeanMapper mapper = new DozerBeanMapper();
 		User user = mapper.map(userDTO, User.class);
 		return adminService.createUser(user);

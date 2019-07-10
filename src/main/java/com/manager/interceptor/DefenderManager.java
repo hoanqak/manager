@@ -19,7 +19,8 @@ public class DefenderManager extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
+        String path = request.getContextPath();
         Token token = tokenRepository.getTokenByCode(code);
         if(token != null){
             User user = userRepository.getUserById(token.getId());
@@ -27,11 +28,11 @@ public class DefenderManager extends HandlerInterceptorAdapter {
                 return true;
             }
             else{
-                response.sendRedirect("/api/v1/yourNotManager");
+                response.sendRedirect(path+"/api/v1/yourNotManager");
                 return true;
             }
         }
-        response.sendRedirect("api/v1/notLoggedIn");
+        response.sendRedirect(path+"/api/v1/notLoggedIn");
         return true;
     }
 }
