@@ -71,41 +71,41 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 			// type = 0: edit checkinout
 			messageDemo.setType(1);
 
-			//send to all manager(role 2)
+//send to all manager(role 2)
 			userRepository.getRoleUser(2).forEach(user1 -> {
-				messageDemo.setTo(user1);
-				messageDemoRepository.save(messageDemo);
-			});
-			return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
-		}
-		return new ResponseEntity(Notifications.ERROR_REQUEST, HttpStatus.OK);
-	}
+					messageDemo.setTo(user1);
+					messageDemoRepository.save(messageDemo);
+					});
+					return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
+					}
+					return new ResponseEntity(Notifications.ERROR_REQUEST, HttpStatus.OK);
+					}
 
-	public ResponseEntity<List<LeaveApplication>> listDayOff(int month, HttpServletRequest request) {
+public ResponseEntity<List<LeaveApplication>> listDayOff(int month, HttpServletRequest request) {
 		String code = request.getHeader("access_Token");
 		if (code == null) {
-			return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
 		}
 		Token token1 = tokenRepository.getTokenByCode(code);
 		int idUser = token1.getId();
 		List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(month, idUser);
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
 		leaveApplicationList.forEach(leaveApplication -> {
-			BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
-				@Override
-				protected void configure() {
-					mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "fromDate").fields("endTime", "toDate");
-				}
-			};
-			DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
-			dozerBeanMapper.addMapping(beanMappingBuilder);
-			LeaveApplicationDTO leaveApplicationDTO1 = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
-			leaveApplicationDTOS.add(leaveApplicationDTO1);
+		BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+@Override
+protected void configure() {
+		mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "fromDate").fields("endTime", "toDate");
+		}
+		};
+		DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+		dozerBeanMapper.addMapping(beanMappingBuilder);
+		LeaveApplicationDTO leaveApplicationDTO1 = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
+		leaveApplicationDTOS.add(leaveApplicationDTO1);
 
 		});
 		return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
-	}
-	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
+		}
+public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
 		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
 		leaveApplicationDTO.setId(leaveApplication.getId());
 		leaveApplicationDTO.setName(leaveApplication.getUser().getName());
@@ -116,23 +116,23 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		leaveApplicationDTO.setStartTime(fromDate);
 		leaveApplicationDTO.setEndTime(toDate);
 		try {
-			leaveApplicationDTO.setPosition(Details.positions[leaveApplication.getUser().getPosition()]);
+		leaveApplicationDTO.setPosition(Details.positions[leaveApplication.getUser().getPosition()]);
 		}catch (ArrayIndexOutOfBoundsException arrEx){
-			arrEx.printStackTrace();
+		arrEx.printStackTrace();
 		}
 		return leaveApplicationDTO;
-	}
+		}
 
-	public ResponseEntity<List<LeaveApplicationDTO>> getListApplicationDTO() {
+public ResponseEntity<List<LeaveApplicationDTO>> getListApplicationDTO() {
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<LeaveApplicationDTO>();
 		for (LeaveApplication leaveApplication : leaveApplicationRepository.findAll()) {
-			LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
-			leaveApplicationDTOS.add(leaveApplicationDTO);
+		LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
+		leaveApplicationDTOS.add(leaveApplicationDTO);
 		}
 		return new ResponseEntity<List<LeaveApplicationDTO>>(leaveApplicationDTOS, HttpStatus.OK);
-	}
+		}
 
-	public ResponseEntity listDayOffPage(int page, int size, HttpServletRequest request) {
+public ResponseEntity listDayOffPage(int page, int size, HttpServletRequest request) {
 		String code = request.getHeader("access_Token");
 		Token token = tokenRepository.getTokenByCode(code);
 		User user = userRepository.getUserById(token.getId());
@@ -141,10 +141,10 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
 		leaveApplicationPage.getContent().forEach(leaveApplication -> {
-			LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
-			leaveApplicationDTOS.add(leaveApplicationDTO);
+		LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
+		leaveApplicationDTOS.add(leaveApplicationDTO);
 		});
 
 		return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
-	}
-}
+		}
+		}
