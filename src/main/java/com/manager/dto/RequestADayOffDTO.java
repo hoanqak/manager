@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Valid
 public class RequestADayOffDTO {
-
 	private long fromDate;
 	private long toDate;
 	private String reason;

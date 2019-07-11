@@ -50,7 +50,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		if (code != null) {
 			Token token = tokenRepository.getTokenByCode(code);
 			User user = userRepository.getUserById(token.getId());
@@ -129,7 +129,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-		String codeToken = request.getHeader("access_Token");
+		String codeToken = request.getHeader("token");
 		if (codeToken == null) {
 			return new ResponseEntity("NOT_LOGGED_IN", HttpStatus.BAD_REQUEST);
 		}
@@ -148,6 +148,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 				calendar.set(Calendar.HOUR_OF_DAY, 12);
 				calendar.set(Calendar.MINUTE, 0);
 				calendar.set(Calendar.SECOND, 0);
+				// cong them 60 neu hour check out >= 12
 				totalMillis = 60;
 			} else if (calendar.get(Calendar.HOUR_OF_DAY) >= 18) {
 				calendar.set(Calendar.HOUR_OF_DAY, 18);
@@ -177,9 +178,6 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 			}
 			checkInOut.setEndTime(calendar.getTime());
 			checkInOut.setTotalTime(totalTime);
-
-			checkInOutRepository.save(checkInOut);
-
 			return new ResponseEntity(Notifications.CHECKOUT_SUCCESS, HttpStatus.OK);
 
 		} else {
@@ -191,7 +189,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		int userId = token.getId();
 		List<CheckInOut> checkInOutList = checkInOutRepository.getListCheckInOutByIdUser(userId);
@@ -283,7 +281,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 	}
 
 	public User getUserInHeader(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		User user = userRepository.getUserById(token.getId());
 

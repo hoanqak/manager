@@ -1,10 +1,7 @@
 package com.manager.dto;
 
-import java.util.Date;
-
 import com.manager.md5.MD5;
 import lombok.AllArgsConstructor;
-import com.manager.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
