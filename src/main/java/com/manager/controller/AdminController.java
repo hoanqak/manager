@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/users/")
-	public ResponseEntity createUser(@RequestBody UserDTO userDTO) {
+	public ResponseEntity createUser(@Valid @RequestBody UserDTO userDTO) {
 		DozerBeanMapper mapper = new DozerBeanMapper();
 		User user = mapper.map(userDTO, User.class);
 		return adminService.createUser(user);
@@ -44,6 +45,7 @@ public class AdminController {
 
 	@PutMapping("/users/{id}")
 	public ResponseEntity updateUserStatus(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
+
 
 		return adminService.updateUserStatus(id, userDTO);
 	}
