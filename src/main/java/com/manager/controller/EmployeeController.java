@@ -7,146 +7,139 @@ import com.manager.service.LeaveApplicationService;
 import com.manager.service.MessageService;
 import com.manager.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.LinkedList;
 import java.util.List;
 
-@Api(value="CONTROLLER EMPLOYEE")
+@Api(value = "CONTROLLER EMPLOYEE")
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
-    @Autowired
-    UserService userService;
+	@Autowired
+	UserService userService;
 
-    @Autowired
-    LeaveApplicationService leaveApplicationService;
+	@Autowired
+	LeaveApplicationService leaveApplicationService;
 
-    @Autowired
-    CheckInOutService checkInOutService;
+	@Autowired
+	CheckInOutService checkInOutService;
 
-    @Qualifier("messageServiceImpl")
-    @Autowired
-    MessageService message;
+	@Qualifier("messageServiceImpl")
+	@Autowired
+	MessageService message;
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO, BindingResult result,
-                                        HttpServletRequest request) {
-        return userService.login(loginDTO, result, request);
-    }
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO, BindingResult result,
+	                                    HttpServletRequest request) {
+		return userService.login(loginDTO, result, request);
+	}
 
-    @PostMapping("/logout")
-    public ResponseEntity logout(HttpServletRequest request) {
-        return userService.logOut(request);
-    }
+	@PostMapping("/logout")
+	public ResponseEntity logout(HttpServletRequest request) {
+		return userService.logOut(request);
+	}
 
-    //get profile
-    @GetMapping("/profile")
-    public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
-        return userService.profile(request);
-    }
+	//get profile
+	@GetMapping("/profile")
+	public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
+		return userService.profile(request);
+	}
 
-    //update profile
-    @PostMapping("/profile")
-    public ResponseEntity updateProfile(@RequestBody ProfileDTO profileDTO, HttpServletRequest request) {
-        return userService.updateProfile(profileDTO, request);
-    }
+	//update profile
+	@PostMapping("/profile")
+	public ResponseEntity updateProfile(@RequestBody ProfileDTO profileDTO, HttpServletRequest request) {
+		return userService.updateProfile(profileDTO, request);
+	}
 
-    @PostMapping("/uploadAvatar")
-    public ResponseEntity uploadFile(@RequestParam(name = "file", required = false) MultipartFile multipartFile, HttpServletRequest request) {
-        return userService.uploadFile(multipartFile, request);
-    }
+	@PostMapping("/uploadAvatar")
+	public ResponseEntity uploadFile(@RequestParam(name = "file", required = false) MultipartFile multipartFile, HttpServletRequest request) {
+		return userService.uploadFile(multipartFile, request);
+	}
 
-    //Reset Password, send mail
-    @PostMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody @Valid LoginDTO loginDTO, BindingResult result, HttpServletRequest request) {
-        return userService.forgotPassword(loginDTO, result, request);
-    }
+	//Reset Password, send mail
+	@PostMapping("/forgotPassword")
+	public ResponseEntity<String> forgotPassword(@RequestBody @Valid LoginDTO loginDTO, BindingResult result, HttpServletRequest request) {
+		return userService.forgotPassword(loginDTO, result, request);
+	}
 
-    //reset password in mail when request forgot password
-    @GetMapping("/forgotPassword/{code}/{id}")
-    public ResponseEntity<String> resetPasswordInMail(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable("code") String code, @PathVariable("id") int id) {
-        return userService.resetPassword(resetPasswordDTO, code, id);
-    }
+	//reset password in mail when request forgot password
+	@GetMapping("/forgotPassword/{code}/{id}")
+	public ResponseEntity<String> resetPasswordInMail(@RequestBody ResetPasswordDTO resetPasswordDTO, @PathVariable("code") String code, @PathVariable("id") int id) {
+		return userService.resetPassword(resetPasswordDTO, code, id);
+	}
 
-    //Change password in profile
-    @PutMapping("/changePassword")
-    public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO, BindingResult result, HttpServletRequest request) {
-        return userService.changePassword(resetPasswordDTO, result, request);
-    }
+	//Change password in profile
+	@PutMapping("/changePassword")
+	public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO, BindingResult result, HttpServletRequest request) {
+		return userService.changePassword(resetPasswordDTO, result, request);
+	}
 
-    // check in
-    @PostMapping("/checkIn")
-    public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-        return checkInOutService.checkIn(checkInOutDTO, request);
-    }
+	// check in
+	@PostMapping("/checkIn")
+	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return checkInOutService.checkIn(checkInOutDTO, request);
+	}
 
-    // check out
-    @PostMapping("/checkOut")
-    public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-        return checkInOutService.checkOut(checkInOutDTO, request);
-    }
+	// check out
+	@PostMapping("/checkOut")
+	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return checkInOutService.checkOut(checkInOutDTO, request);
+	}
 
-/*	//get list checkInOuts
-	@GetMapping("/checkInOuts")
-	public ResponseEntity<List<CheckInOut>> checkInOuts(HttpServletRequest request) {
-		return checkInOutService.getListCheckInOut(request);
-	}*/
+	//get all list check in check out
+	@GetMapping("/checkInOuts/{page}/{size}")
+	public ResponseEntity test(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
+		return checkInOutService.getCheckInOutAndPage(page, size, request);
+	}
 
-    //get all list check in check out
-    @GetMapping("/checkInOuts/{page}/{size}")
-    public ResponseEntity test(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
-        return checkInOutService.getCheckInOutAndPage(page, size, request);
-    }
+	// request a edit check in or check out to admin
+	@PostMapping("/requestEditCheckInOut")
+	public RequestMessageDTO requestEditCheckInOut(@RequestBody RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
+		return message.requestEditCheckInOut(requestMessageDTO, request);
+	}
 
-    // request a edit check in or check out to admin
-    @PostMapping("/requestEditCheckInOut")
-    public RequestMessageDTO requestEditCheckInOut(@RequestBody RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
-        return message.requestEditCheckInOut(requestMessageDTO, request);
-    }
+	// get list message unread by page and size
+	@GetMapping("/messageUnread/{page}/{size}")
+	public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("size") int size) {
+		return message.getAllMessageUnreadPage(request, page, size);
+	}
 
-    // get list message unread by page and size
-    @GetMapping("/messageUnread/{page}/{size}")
-    public ResponseEntity<List<MessageDemoDTO>> getMessageUnread(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("size") int size) {
-        return message.getAllMessageUnreadPage(request, page, size);
-    }
+	//read a message
+	@PostMapping("/readMessage/{id}")
+	public ResponseEntity readMessage(@PathVariable("id") int id, HttpServletRequest request) {
+		return message.readAMessage(id, request);
+	}
 
-    //read a message
-    @PostMapping("/readMessage/{id}")
-    public ResponseEntity readMessage(@PathVariable("id") int id, HttpServletRequest request) {
-        return message.readAMessage(id, request);
-    }
+	// create leave application send to manager
+	@PostMapping("/requestADayOff")
+	public ResponseEntity requestADayOff(@RequestBody LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
+		return leaveApplicationService.requestADayOff(leaveApplicationDTO, request);
+	}
 
-    // create leave application send to manager
-    @PostMapping("/requestADayOff")
-    public ResponseEntity requestADayOff(@RequestBody LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
-        return leaveApplicationService.requestADayOff(leaveApplicationDTO, request);
-    }
+	//get leave application by month
+	@GetMapping("/listDayOff/{month}")
+	public ResponseEntity<List<LeaveApplication>> listDayOff(@PathVariable("month") int month, HttpServletRequest request) {
+		return leaveApplicationService.listDayOff(month, request);
+	}
 
-    //get leave application by month
-    @GetMapping("/listDayOff/{month}")
-    public ResponseEntity<List<LeaveApplication>> listDayOff(@PathVariable("month") int month, HttpServletRequest request) {
-        return leaveApplicationService.listDayOff(month, request);
-    }
+	//get list leave application with page and size
+	@GetMapping("/listDayOff/{page}/{size}")
+	public ResponseEntity listDayOffPage(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
+		return leaveApplicationService.listDayOffPage(page, size, request);
+	}
 
-    //get list leave application with page and size
-    @GetMapping("/listDayOff/{page}/{size}")
-    public ResponseEntity listDayOffPage(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
-        return leaveApplicationService.listDayOffPage(page, size, request);
-    }
-
-    @GetMapping("/messages/{page}/{size}")
-    public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
-        return message.messages(page, size, request);
-    }
+	@GetMapping("/messages/{page}/{size}")
+	public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request) {
+		return message.messages(page, size, request);
+	}
 
 
 }

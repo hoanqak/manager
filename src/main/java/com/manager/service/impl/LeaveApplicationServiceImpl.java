@@ -109,23 +109,28 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		});
 		return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
 	}
+
+	@Override
 	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
-		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
-		leaveApplicationDTO.setId(leaveApplication.getId());
-		leaveApplicationDTO.setName(leaveApplication.getUser().getName());
-		leaveApplicationDTO.setReason(leaveApplication.getReason());
-		leaveApplicationDTO.setStatus(leaveApplication.getStatus());
-		long fromDate = leaveApplication.getStartTime().getTime();
-		long toDate = leaveApplication.getEndTime().getTime();
-		leaveApplicationDTO.setStartTime(fromDate);
-		leaveApplicationDTO.setEndTime(toDate);
-		try {
-			leaveApplicationDTO.setPosition(Details.positions[leaveApplication.getUser().getPosition()]);
-		}catch (ArrayIndexOutOfBoundsException arrEx){
-			arrEx.printStackTrace();
-		}
-		return leaveApplicationDTO;
+		return null;
 	}
+//	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
+//		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
+//		leaveApplicationDTO.setId(leaveApplication.getId());
+//		leaveApplicationDTO.setName(leaveApplication.getUser().getName());
+//		leaveApplicationDTO.setReason(leaveApplication.getReason());
+//		leaveApplicationDTO.setStatus(leaveApplication.getStatus());
+//		long fromDate = leaveApplication.getStartTime().getTime();
+//		long toDate = leaveApplication.getEndTime().getTime();
+//		leaveApplicationDTO.setStartTime(fromDate);
+//		leaveApplicationDTO.setEndTime(toDate);
+//		try {
+//			leaveApplicationDTO.setPosition(Constants.positions[leaveApplication.getUser().getPosition()]);
+//		}catch (ArrayIndexOutOfBoundsException arrEx){
+//			arrEx.printStackTrace();
+//		}
+//		return leaveApplicationDTO;
+//	}
 
 	public ResponseEntity<List<LeaveApplicationDTO>> getListApplicationDTO() {
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<LeaveApplicationDTO>();

@@ -15,13 +15,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
-    @Bean
-    public Docket docket() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2);
-        docket.apiInfo(new ApiInfoBuilder().contact(new Contact("MANAGER", "localhots:8080/", "itleadpro.vn")).title("MANAGER").description("THIS IS PROJECT INTERNAL").version("1.0").build());
-        docket.select().apis(RequestHandlerSelectors.basePackage("com")).paths(PathSelectors.any()).build();
+	@Bean
+	public Docket docket() {
+		Docket docket = new Docket(DocumentationType.SWAGGER_2);
+		docket.apiInfo(new ApiInfoBuilder().contact(new Contact("ITLeadPro", "itleadpro.vn", "itleadpro@gmail.com"))
+				.title("MANAGER")
+				.description("THIS IS PROJECT INTERNAL")
+				.version("1.0").build());
+		docket.select()
+				.apis(RequestHandlerSelectors.basePackage("com"))
+				.paths(PathSelectors.any())
+				.build();
 
-        return docket;
-    }
+		return docket;
+	}
 
 }

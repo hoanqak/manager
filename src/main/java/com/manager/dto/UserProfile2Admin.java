@@ -5,17 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
-public class LeaveApplicationDTO {
+@AllArgsConstructor
+public class UserProfile2Admin {
+
 	private int id;
 	private String name;
-	private int position;
-	private long startTime;
-	private long endTime;
-	private String reason;
+	private long birthday;
+	private String phoneNumber;
+	private String email;
+	private String position;
 	private String status;
 
 }
