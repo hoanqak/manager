@@ -6,7 +6,10 @@ import com.manager.service.CheckInOutService;
 import com.manager.service.LeaveApplicationService;
 import com.manager.service.MessageService;
 import com.manager.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+@Api(value="CONTROLLER EMPLOYEE")
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
