@@ -1,6 +1,6 @@
 package com.manager.controller;
 
-import com.manager.config.WriteExcel;
+import com.manager.common.Export2Excel;
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.UserDTO;
 import com.manager.model.TotalWorkingDay;
@@ -99,9 +99,9 @@ public class AdminController {
 	@GetMapping("/checkInOuts/allMonth/exportToExcel")
 	public ResponseEntity export2Excel(@RequestParam("path") String path, @RequestParam("startDate") long startDate,
 	                                   @RequestParam("endDate") long endDate) throws Exception {
-		WriteExcel writeExcel = new WriteExcel();
+		Export2Excel export2Excel = new Export2Excel();
 		List<TotalWorkingDay> list = adminService.getTotalCheckInInMonth(new Date(startDate), new Date(endDate));
-		writeExcel.writeExcel(list, path);
+		export2Excel.writeExcel(list, path);
 		return new ResponseEntity("EXPORT_FILE_SUCCESS", HttpStatus.OK);
 	}
 

@@ -1,4 +1,4 @@
-package com.manager.config;
+package com.manager.common;
 
 import com.manager.model.Details;
 import com.manager.model.TotalWorkingDay;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public class WriteExcel {
+public class Export2Excel {
 	private static final int COLUMN_INDEX_USERID = 0;
 	private static final int COLUMN_INDEX_NAME = 1;
 	private static final int COLUMN_INDEX_POSITION = 2;
