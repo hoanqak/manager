@@ -5,7 +5,6 @@ import com.manager.dto.LoginDTO;
 import com.manager.dto.ProfileDTO;
 import com.manager.dto.ResetPasswordDTO;
 import com.manager.md5.MD5;
-import com.manager.model.Details;
 import com.manager.model.PasswordIssuingCode;
 import com.manager.model.Token;
 import com.manager.model.User;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,14 +33,14 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    public final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponseEntity<String> login(LoginDTO loginDTO, BindingResult result, HttpServletRequest request) {
+	    logger.info("Method - Login");
 		if (result.hasErrors()) {
 			List<String> list = new LinkedList<>();
 			result.getAllErrors().forEach(s -> {
@@ -89,7 +90,6 @@ public class UserServiceImpl implements UserService {
 				return new ResponseEntity<>(token.getToken(), HttpStatus.OK);
 			}
 		}
-
 		return new ResponseEntity<>(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
 	}
 
@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
                 profileDTO.setStartDate(startDate);
             }
             try {
-                profileDTO.setPosition(Details.positions[user.getPosition()]);
+//                profileDTO.setPosition(Details.positions[user.getPosition()]);
             }catch (ArrayIndexOutOfBoundsException arrE){}
         }
         return new ResponseEntity<>(profileDTO, HttpStatus.OK);

@@ -221,7 +221,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckInAndUserId(pageable, new Date(startDate), new Date(endDate), idUser);
 		List<CheckInOut> checkInOuts = page.getContent();
 		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
-		checkInOuts.forEach(checkInOut -> checkInOutDTOS.add(mapper.map(checkInOut, CheckInOutDTO.class)));
+		checkInOuts.forEach(checkInOut -> checkInOutDTOS.add(dozerBeanMapper.map(checkInOut, CheckInOutDTO.class)));
 
 		return new ResponseEntity(checkInOutDTOS, HttpStatus.OK);
 	}

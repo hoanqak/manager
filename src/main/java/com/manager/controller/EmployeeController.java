@@ -11,10 +11,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(value="CONTROLLER EMPLOYEE")
@@ -31,13 +33,14 @@ public class EmployeeController {
 	@Autowired
 	CheckInOutService checkInOutService;
 
+	@Qualifier("messageServiceImpl")
 	@Autowired
 	MessageService message;
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO,
+	public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO, BindingResult result,
 	                                    HttpServletRequest request) {
-		return userService.login(loginDTO, request);
+		return userService.login(loginDTO, result, request);
 	}
 
 	@PostMapping("/logout")

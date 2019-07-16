@@ -112,10 +112,5 @@ public class AdminController {
 		return messageService.messages(page, size, request);
 	}
 
-	@GetMapping
-	public ResponseEntity test(){
-		SecurityContext securityContext = new SecurityContext() {
-		}
-	}
 
 }

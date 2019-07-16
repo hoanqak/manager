@@ -1,11 +1,17 @@
 package com.manager.controller;
 
 import com.manager.data.Notifications;
+import com.manager.dto.LoginDTO;
+import com.manager.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/")
@@ -24,4 +30,19 @@ public class RoleErrorController {
 	public ResponseEntity notManager() {
 		return new ResponseEntity(Notifications.YOUR_NOT_MANAGER, HttpStatus.UNAUTHORIZED);
 	}
+
+//	@Autowired
+//	AuthenticationManager authentication;
+//
+//	@PostMapping("/signin")
+//	public ResponseEntity login(@RequestBody LoginDTO loginDTO){
+//		System.out.println("in");
+//		Authentication authenticationManager = authentication.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+//		SecurityContextHolder.getContext().setAuthentication(authenticationManager);
+//		User user = (User) SecurityContextHolder.getContext().getAuthentication();
+//
+//		System.out.println(user.getEmail());
+//		return new ResponseEntity(user, HttpStatus.OK);
+//
+//	}
 }
