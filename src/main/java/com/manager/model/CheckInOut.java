@@ -33,7 +33,7 @@ public class CheckInOut {
     @Column(name = "updated_time")
     @UpdateTimestamp
     private Date updatedTime;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
     private User user;
 

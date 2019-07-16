@@ -1,6 +1,7 @@
 package com.manager.service;
 
 import com.manager.dto.PagedResponse;
+import com.manager.dto.SignUpRequest;
 import com.manager.dto.UserProfile2Admin;
 import com.manager.model.TotalWorkingDay;
 import com.manager.model.User;
@@ -14,9 +15,9 @@ public interface AdminService {
 
 	PagedResponse<UserProfile2Admin> pageGetAllUser(int pageNumber, int pageSize);
 
-	User createUser(User user);
+	User createUser(SignUpRequest signUpRequest);
 
-//	ResponseEntity updateUserStatus(int id, UserDTO userDTO);
+	User updateUserStatus(int id, UserProfile2Admin userProfile2Admin);
 
 	//	trả về User có Id cần tìm, chuyển toàn bộ thông tin lên form Edit của Admin
 	UserProfile2Admin getUserByIdToEditPage(int id);

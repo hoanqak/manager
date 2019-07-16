@@ -1,9 +1,11 @@
 package com.manager.service.impl;
 
 import com.manager.data.Constants;
+import com.manager.data.Notifications;
 import com.manager.data.Position;
 import com.manager.data.Status;
 import com.manager.dto.PagedResponse;
+import com.manager.dto.SignUpRequest;
 import com.manager.dto.UserProfile2Admin;
 import com.manager.exception.BadRequestException;
 import com.manager.exception.ResourceNotFoundException;
@@ -14,6 +16,8 @@ import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
 import org.dozer.DozerBeanMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +35,10 @@ public class AdminServiceImpl implements AdminService {
 	UserRepository userRepository;
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
+	@Autowired
+	DozerBeanMapper mapper;
 
-	//	mapping model
-	DozerBeanMapper mapper = new DozerBeanMapper();
-
+	private static final Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
 	@Override
 	public PagedResponse<UserProfile2Admin> pageGetAllUser(int pageNumber, int pageSize) {
@@ -61,9 +65,32 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public User createUser(User user) {
-		return null;
+	public User createUser(SignUpRequest signUpRequest) {
+		User userByEmail = userRepository.findUserByEmail(signUpRequest.getEmail());
+		if(userByEmail != null){
+			logger.error(Notifications.USER_ALREADY_EXISTS + " with email: " + signUpRequest.getEmail());
+			logger.error(Notifications.CREATE_USER_FAILED);
+			return null;
+		}
+		User newUser = mapper.map(signUpRequest, User.class);
+		newUser.setStatus(Status.ACTIVE.getValue());
+		userRepository.save(newUser);
+		logger.info(Notifications.CREATE_USER_SUCCESS + " with email: " + signUpRequest.getEmail());
+		return newUser;
 	}
+
+	@Override
+	public User updateUserStatus(int id, UserProfile2Admin userProfile2Admin) {
+		User userById = userRepository.findUserById(id);
+		if(userById == null){
+			logger.error(Notifications.USER_NOT_EXISTS + " with Id: " + id);
+			logger.error(Notifications.UPDATE_USER_FAILED);
+			return null;
+		}
+		userById.setStatus(Status.valueOf(userProfile2Admin.getStatus()).getValue());
+		return userById;
+	}
+
 
 	@Override
 	public UserProfile2Admin getUserByIdToEditPage(int id) {
@@ -80,30 +107,7 @@ public class AdminServiceImpl implements AdminService {
 		return userProfile2Admin;
 	}
 
-//	@Override
-//	public ResponseEntity createUser(User user) {
-//		User userByEmail = userRepository.findUserByEmail(user.getEmail());
-//		if (userByEmail != null) {
-//			return new ResponseEntity(Notifications.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
-//		}
-//		userRepository.save(user);
-//		return new ResponseEntity(Notifications.CREATE_USER_SUCCESS, HttpStatus.OK);
-//	}
-//
-//	@Override
-//	public ResponseEntity updateUserStatus(int id, UserDTO userDTO) {
-//		User user = userRepository.findUserById(id);
-//
-//		user.setStatus(userDTO.getStatus());
-//		user.setDepartment(userDTO.getDepartment());
-//		user.setPosition(userDTO.getPosition());
-//		user.setKindOfEmployee(userDTO.getKindOfEmployee());
-//		user.setRole(userDTO.getRole());
-//		user.setUpdatedDate(new Date(userDTO.getUpdatedDate()));
-//
-//		return new ResponseEntity(Notifications.UPDATE_USER_SUCCESS, HttpStatus.OK);
-//
-//	}
+
 //
 //	@Override
 //	public ResponseEntity getUserByIdToEditPage(int id) {
