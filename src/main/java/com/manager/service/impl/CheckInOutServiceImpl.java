@@ -195,16 +195,16 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		int userId = token.getId();
 		List<CheckInOut> checkInOutList = checkInOutRepository.getListCheckInOutByIdUser(userId);
-		return new ResponseEntity<List<CheckInOut>>(checkInOutList, HttpStatus.OK);
+		return new ResponseEntity<>(checkInOutList, HttpStatus.OK);
 	}
 
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ResponseEntity pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize) {
+	public ResponseEntity<CheckInOutDTO> pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckIn(pageable, new Date(date));
 		List<CheckInOut> checkInOuts = page.getContent();
@@ -216,7 +216,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize) {
+	public ResponseEntity<List<CheckInOutDTO>> getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckInAndUserId(pageable, new Date(startDate), new Date(endDate), idUser);
 		List<CheckInOut> checkInOuts = page.getContent();
@@ -259,7 +259,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 
 	@Override
-	public ResponseEntity getACheckInById(int id, HttpServletRequest request) {
+	public ResponseEntity<CheckInOutDTO> getACheckInById(int id, HttpServletRequest request) {
 		User user = getUserInHeader(request);
 		BeanMappingBuilder beanMappingBuilder = getBeanMappingBuilder();
 		dozerBeanMapper.addMapping(beanMappingBuilder);
@@ -284,7 +284,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 	}
 
 	public User getUserInHeader(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		User user = userRepository.getUserById(token.getId());
 		return user;

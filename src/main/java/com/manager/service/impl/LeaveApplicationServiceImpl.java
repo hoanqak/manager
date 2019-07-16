@@ -34,7 +34,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 	@Autowired
 	private TokenRepository tokenRepository;
-
+	@Autowired
+	DozerBeanMapper dozerBeanMapper;
 	@Autowired
 	MessageDemoRepository messageDemoRepository;
 	@Autowired
@@ -95,15 +96,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		List<LeaveApplication> leaveApplicationList = leaveApplicationRepository.getListApplicationInWeek(month, idUser);
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
 		leaveApplicationList.forEach(leaveApplication -> {
-			BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
-				@Override
-				protected void configure() {
-					mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "fromDate").fields("endTime", "toDate");
-				}
-			};
-			DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
-			dozerBeanMapper.addMapping(beanMappingBuilder);
-			LeaveApplicationDTO leaveApplicationDTO1 = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
+
+			LeaveApplicationDTO leaveApplicationDTO1 = convertToLeaveApplicationDTO(leaveApplication);
 			leaveApplicationDTOS.add(leaveApplicationDTO1);
 
 		});
@@ -112,7 +106,16 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 	@Override
 	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
-		return null;
+		BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+			@Override
+			protected void configure() {
+				mapping(LeaveApplication.class, LeaveApplicationDTO.class).fields("startTime", "startTime").fields("endTime", "endTime");
+			}
+		};
+		dozerBeanMapper = new DozerBeanMapper();
+		dozerBeanMapper.addMapping(beanMappingBuilder);
+		LeaveApplicationDTO leaveApplicationDTO = dozerBeanMapper.map(leaveApplication, LeaveApplicationDTO.class);
+		return leaveApplicationDTO;
 	}
 //	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
 //		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();

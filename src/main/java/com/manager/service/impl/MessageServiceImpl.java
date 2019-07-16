@@ -35,7 +35,8 @@ public class MessageServiceImpl implements MessageService {
     MessageDemoRepository messageDemoRepository;
     @Autowired
     LeaveApplicationRepository leaveApplicationRepository;
-
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
     @Autowired
     CheckInOutRepository checkInOutRepository;
     //get user with token
@@ -97,22 +98,31 @@ public class MessageServiceImpl implements MessageService {
     }
 
     public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
-        MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
-        messageDemoDTO.setId(messageDemo.getId());
-        messageDemoDTO.setContent(messageDemo.getContent());
-        messageDemoDTO.setTitle(messageDemo.getTitle());
-        messageDemoDTO.setTo(messageDemo.getTo().getName());
-        messageDemoDTO.setFrom(messageDemo.getFrom().getName());
-        messageDemoDTO.setStatus(messageDemo.getStatus());
+        BeanMappingBuilder beanMappingBuilder = new BeanMappingBuilder() {
+            @Override
+            protected void configure() {
+                mapping(MessageDemo.class, MessageDemoDTO.class).exclude("type").fields("from.name", "from")
+                        .fields("to.name", "to").fields("idReport", "idRecord");
+            }
+        };
+        dozerBeanMapper = new DozerBeanMapper();
+        dozerBeanMapper.addMapping(beanMappingBuilder);
+//        messageDemoDTO.setId(messageDemo.getId());
+//        messageDemoDTO.setContent(messageDemo.getContent());
+//        messageDemoDTO.setTitle(messageDemo.getTitle());
+//        messageDemoDTO.setTo(messageDemo.getTo().getName());
+//        messageDemoDTO.setFrom(messageDemo.getFrom().getName());
+//        messageDemoDTO.setStatus(messageDemo.getStatus());
+        MessageDemoDTO messageDemoDTO = dozerBeanMapper.map(messageDemo, MessageDemoDTO.class);
         if (messageDemo.getType() == 0) {
             messageDemoDTO.setType(Notifications.REQUEST_EDIT_CHECKINOUT);
         } else if (messageDemo.getType() == 1) {
             messageDemoDTO.setType(Notifications.REQUEST_A_DAY_OFF);
         }
-        messageDemoDTO.setIdRecord(messageDemo.getIdReport());
-        messageDemoDTO.setId(messageDemo.getId());
-        long time = messageDemo.getTimeRequest().getTime();
-        messageDemoDTO.setTimeRequest(time);
+//        messageDemoDTO.setIdRecord(messageDemo.getIdReport());
+//        messageDemoDTO.setId(messageDemo.getId());
+//        long time = messageDemo.getTimeRequest().getTime();
+//        messageDemoDTO.setTimeRequest(time);
         return messageDemoDTO;
     }
 
@@ -138,7 +148,7 @@ public class MessageServiceImpl implements MessageService {
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }else if(checkInOut != null && messageDemo.getType() == 0){
             BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
-            DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+            dozerBeanMapper =  new DozerBeanMapper();
             dozerBeanMapper.addMapping(beanMappingBuilder);
             CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
             return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
