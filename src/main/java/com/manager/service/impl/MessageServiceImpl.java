@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
     CheckInOutRepository checkInOutRepository;
     //get user with token
     public User getUser(HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.getUserById(token.getId());
         return user;
@@ -48,17 +48,23 @@ public class MessageServiceImpl implements MessageService {
 
     public RequestMessageDTO requestEditCheckInOut(RequestMessageDTO requestMessageDTO, HttpServletRequest request) {
         User user = getUser(request);
+        //type == 0: edit check in check out
+        //type == 1: leave application
         if (requestMessageDTO.getType() == 0) {
             MessageDemo messageDemo = new MessageDemo();
             messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
-            messageDemo.setTitle("User: " + "(" + user.getName() + ")" + " Request edit checkInOut time");
+            String title = "User: " + user.getName() +"(id: " + user.getId()+ ")" + " Request edit checkInOut time";
+            messageDemo.setTitle(title);
             messageDemo.setContent(requestMessageDTO.getContent());
             messageDemo.setFrom(user);
             messageDemo.setType(0);
+
+            //idReport constant a record checkInOut
             messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
 
             //send for admin
-            userRepository.getRoleUser(2).forEach(user1 -> {
+            // role = 1 is admin
+            userRepository.getRoleUser(1).forEach(user1 -> {
                 System.out.println(user1.toString());
                 messageDemo.setTo(user1);
                 messageDemoRepository.save(messageDemo);

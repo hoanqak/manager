@@ -4,22 +4,33 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDTO {
-	@NotNull(message = "EMAIL_NOT_NULL")
-	@Email(message = "TYPE_NOT_EMAIL")
+public class SignUpRequestDTO {
+
+	@NotNull
+	@NotBlank
+	@Size(max = 100)
+	private String name;
+
+	@NotBlank
+	@Email
+	@Size(min = 3, max = 50)
 	private String email;
 
-	@Length(max = 15, min = 8)
-	@NotNull(message = "PASSWORD_NOT_NULL")
+	@NotBlank
+	@Size(min = 8, max = 20)
 	private String password;
+
+	@NotNull
+	private int position;
 
 }

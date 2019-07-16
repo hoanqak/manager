@@ -59,31 +59,39 @@ public class UserServiceImpl implements UserService {
     @Value("${path.avatar}")
     String pathAvatar;
 
-    @Override
-    public ResponseEntity<String> login(LoginDTO loginDTO, HttpServletRequest request) {
-        User user = userRepository.searchUserByEmail(loginDTO.getEmail());
-        if (user != null) {
-            Token token = tokenRepository.getTokenById(user.getId());
-            if (token == null) {
-                int random = new Random().nextInt();
-                while (true) {
-                    try {
-                        String tokenString = md5.convertToMD5(String.valueOf(random));
-                        token = new Token(user.getId(), tokenString);
-                        token = tokenRepository.save(token);
-                        break;
-                    } catch (Exception e) {
-                        random = new Random().nextInt();
-                    }
-                }
-            }
-            if (user.getPassword() != null && user.getPassword().equals(md5.convertToMD5(loginDTO.getPassword()))) {
-                return new ResponseEntity<>(token.getToken(), HttpStatus.OK);
-            }
-        }
+	@Override
+	public ResponseEntity<String> login(LoginDTO loginDTO, BindingResult result, HttpServletRequest request) {
+		if (result.hasErrors()) {
+			List<String> list = new LinkedList<>();
+			result.getAllErrors().forEach(s -> {
+				String error = s.getDefaultMessage();
+				list.add(error);
+			});
+			return new ResponseEntity(list, HttpStatus.OK);
+		}
+		User user = userRepository.searchUserByEmail(loginDTO.getEmail());
+		if (user != null) {
+			Token token = tokenRepository.getTokenById(user.getId());
+			if (token == null) {
+				int random = new Random().nextInt();
+				while (true) {
+					try {
+						String tokenString = md5.convertToMD5(String.valueOf(random));
+						token = new Token(user.getId(), tokenString);
+						token = tokenRepository.save(token);
+						break;
+					} catch (Exception e) {
+						random = new Random().nextInt();
+					}
+				}
+			}
+			if (user.getPassword() != null && user.getPassword().equals(md5.convertToMD5(loginDTO.getPassword()))) {
+				return new ResponseEntity<>(token.getToken(), HttpStatus.OK);
+			}
+		}
 
-        return new ResponseEntity<>(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
-    }
+		return new ResponseEntity<>(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
+	}
 
     @SuppressWarnings("unchecked")
     @Override
