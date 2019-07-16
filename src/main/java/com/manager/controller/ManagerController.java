@@ -4,6 +4,7 @@ import com.manager.repository.MessageDemoRepository;
 import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.MessageService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,9 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api/v1/manager/")
+@Api(value = "MANAGER CONTROLLER")
 @Transactional
 public class ManagerController {
-
 
 	@Qualifier("messageServiceImpl")
 	@Autowired

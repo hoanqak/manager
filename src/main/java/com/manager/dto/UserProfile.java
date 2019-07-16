@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserProfile {
+
 	private int id;
 	private String picture;
 	private String name;

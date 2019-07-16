@@ -5,9 +5,11 @@ import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.PagedResponse;
 import com.manager.dto.UserProfile2Admin;
 import com.manager.model.TotalWorkingDay;
+import com.manager.model.User;
 import com.manager.service.AdminService;
 import com.manager.service.CheckInOutService;
 import com.manager.service.MessageService;
+import io.swagger.annotations.Api;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = {"/api/v1/admin"})
+@Api(value = "ADMIN CONTROLLER")
 public class AdminController {
 
 	@Autowired
