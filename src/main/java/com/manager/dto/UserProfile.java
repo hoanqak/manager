@@ -10,12 +10,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserProfile {
+
 	private int id;
-	private String picture;
-	private String name;
 	private long birthday;
-	private int position;
+	private long startedDate;
+	private String position;
 	private String phoneNumber;
 	private String email;
-	private long startedDate;
+	private String picture;
+	private String name;
+	private String status;
 }

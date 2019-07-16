@@ -13,12 +13,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig extends WebMvcConfigurerAdapter {
+public class SwaggerConfig{
 
 	@Bean
 	public Docket docket() {
 		Docket docket = new Docket(DocumentationType.SWAGGER_2);
-		docket.apiInfo(new ApiInfoBuilder().contact(new Contact("ITLeadPro", "itleadpro.vn", "itleadpro@gmail.com"))
+		docket.apiInfo(new ApiInfoBuilder()
+				.contact(new Contact("ITLeadPro", "itleadpro.vn", "itleadpro@gmail.com"))
 				.title("MANAGER")
 				.description("THIS IS PROJECT INTERNAL")
 				.version("1.0").build());

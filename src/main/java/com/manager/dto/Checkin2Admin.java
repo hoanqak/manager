@@ -1,6 +1,5 @@
 package com.manager.dto;
 
-import com.manager.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,18 +7,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CheckInOutDTO {
+@NoArgsConstructor
+public class Checkin2Admin {
+
 	private int id;
-	private int id_user;
+	private int userId;
+	private int totalTime;
 	private String name;
-	private int position;
+	private String position;
 	private long startTime;
 	private long endTime;
-	private int totalTime;
-	private long timeCheck;
-	private long dayCheckIn;
-	private User user;
 
 }
