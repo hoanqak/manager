@@ -85,7 +85,6 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(Notifications.WRONG_USERNAME_OR_PASSWORD, HttpStatus.OK);
     }
 
-
     @SuppressWarnings("unchecked")
     @Override
     public ResponseEntity<String> forgotPassword(LoginDTO loginDTO, HttpServletRequest request) {
@@ -133,8 +132,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
     // reset password in email send by forgot password
+    @Override
     public ResponseEntity<String> resetPassword(ResetPasswordDTO resetPasswordDTO, String code, int id) {
         //get code reset password in db
         PasswordIssuingCode passwordIssuingCode = passwordIssuingCodeRepository.getPasswordIssuingCodeById(id);
@@ -163,11 +162,9 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(Notifications.LINK_DIE, HttpStatus.OK);
     }
 
-
     @Override
-    public ResponseEntity<String> logOut(HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
-        Token token = tokenRepository.getTokenByCode(code);
+    public ResponseEntity<String> logOut(String tokenInHeader) {
+        Token token = tokenRepository.getTokenByCode(tokenInHeader);
         if (token != null) {
             int random = new Random().nextInt();
             String tokenNew = md5.convertToMD5(String.valueOf(random));
@@ -176,16 +173,13 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(Notifications.LOGOUT_SUCCESS, HttpStatus.OK);
     }
 
-
-    public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
-        Token token = tokenRepository.getTokenByCode(code);
+    @Override
+    public ResponseEntity<ProfileDTO> profile(String tokenInHeader) {
+        Token token = tokenRepository.getTokenByCode(tokenInHeader);
         User user = userRepository.getUserById(token.getId());
-        System.out.println(user.getPicture());
         ProfileDTO profileDTO = new ProfileDTO();
         if (user != null) {
             profileDTO.setAvatar(user.getPicture());
-            System.out.println(profileDTO.getAvatar());
             profileDTO.setEmail(user.getEmail());
             profileDTO.setFullName(user.getName());
             profileDTO.setPhoneNumber(user.getPhoneNumber());
@@ -203,21 +197,18 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(profileDTO, HttpStatus.OK);
     }
 
-
     @Override
-    public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
+    public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, String tokenInHeader) {
         if (profileDTO.getPhoneNumber().length() > 10) {
             return new ResponseEntity("LENGTH_OF_PHONE_NUMBER_10", HttpStatus.OK);
         }
         try {
-            System.out.println(profileDTO.getPhoneNumber().length());
-            long number = Long.parseLong(profileDTO.getPhoneNumber());
+            Long.parseLong(profileDTO.getPhoneNumber());
         } catch (NumberFormatException e) {
             return new ResponseEntity("NUMBER_FORMAT_EXCEPTION", HttpStatus.OK);
         }
 
-        Token token = tokenRepository.getTokenByCode(code);
+        Token token = tokenRepository.getTokenByCode(tokenInHeader);
         User user = userRepository.findById(token.getId()).get();
         user.setName(profileDTO.getFullName());
         user.setPhoneNumber(profileDTO.getPhoneNumber());
@@ -233,12 +224,12 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
-        String codeToken = request.getHeader("access_Token");
-        if (codeToken == null) {
+    @Override
+    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, String tokenInHeader) {
+        if (tokenInHeader == null) {
             return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
         }
-        Token token = tokenRepository.getTokenByCode(codeToken);
+        Token token = tokenRepository.getTokenByCode(tokenInHeader);
         User user = userRepository.findById(token.getId()).get();
         String convertPassword = md5.convertToMD5(resetPasswordDTO.getOldPassword());
         if (user.getPassword().equals(convertPassword)) {
@@ -255,13 +246,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public ResponseEntity uploadFile(MultipartFile multipartFile, HttpServletRequest request) {
-        String codeToken = request.getHeader("access_Token");
-        Token token = tokenRepository.getTokenByCode(codeToken);
+    @Override
+    public ResponseEntity uploadFile(MultipartFile multipartFile, String header) {
+        Token token = tokenRepository.getTokenByCode(header);
         int userId = token.getId();
         User user = userRepository.findById(userId).get();
-        System.out.println(user.getEmail());
-
         //check file exits, if exits then delete
         if (user.getPicture() != null) {
             File oldFile = new File(user.getPicture());
@@ -275,7 +264,6 @@ public class UserServiceImpl implements UserService {
                 String img = md5.convertToMD5(String.valueOf(user.getId()));
                 int random = new Random().nextInt();
                 String filePath = pathAvatar + img + random + "-" + multipartFile.getOriginalFilename();
-                System.out.println(filePath);
                 File file = new File(filePath);
                 try {
                     multipartFile.transferTo(file);

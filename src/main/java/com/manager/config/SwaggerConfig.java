@@ -20,7 +20,6 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
         docket.apiInfo(new ApiInfoBuilder().contact(new Contact("MANAGER", "localhots:8080/", "itleadpro.vn")).title("MANAGER").description("THIS IS PROJECT INTERNAL").version("1.0").build());
         docket.select().apis(RequestHandlerSelectors.basePackage("com")).paths(PathSelectors.any()).build();
-
         return docket;
     }
 

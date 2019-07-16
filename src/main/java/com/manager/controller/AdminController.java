@@ -12,6 +12,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,6 +109,12 @@ public class AdminController {
 	@GetMapping("/messages/{page}/{size}")
 	public ResponseEntity messages(@PathVariable("page") int page, @PathVariable("size") int size, HttpServletRequest request){
 		return messageService.messages(page, size, request);
+	}
+
+	@GetMapping
+	public ResponseEntity test(){
+		SecurityContext securityContext = new SecurityContext() {
+		}
 	}
 
 }

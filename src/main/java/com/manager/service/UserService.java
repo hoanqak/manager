@@ -15,17 +15,17 @@ public interface UserService {
 
     public ResponseEntity<String> login(LoginDTO loginDTO, HttpServletRequest request);
 
-    public ResponseEntity<String> logOut(HttpServletRequest request);
+    public ResponseEntity<String> logOut(String tokenInHeader);
 
     public ResponseEntity<String> forgotPassword(LoginDTO loginDTO, HttpServletRequest request);
 
-    public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request);
+    public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, String header);
 
-    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, HttpServletRequest request);
+    public ResponseEntity changePassword(ResetPasswordDTO resetPasswordDTO, String tokenInHeader);
 
-    public ResponseEntity uploadFile(MultipartFile multipartFile, HttpServletRequest request);
+    public ResponseEntity uploadFile(MultipartFile multipartFile, String tokenInHeader);
 
-    public ResponseEntity<ProfileDTO> profile(HttpServletRequest request);
+    public ResponseEntity<ProfileDTO> profile(String tokenInHeader);
 
     public ResponseEntity<String> resetPassword(ResetPasswordDTO resetPasswordDTO, String code, int id);
 }

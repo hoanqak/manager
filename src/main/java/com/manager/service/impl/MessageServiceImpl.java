@@ -64,18 +64,6 @@ public class MessageServiceImpl implements MessageService {
                 messageDemoRepository.save(messageDemo);
             });
         }
-		/* else if (requestMessageDTO.getType() == 1) {
-			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setTitle("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
-			messageDemo.setContent(requestMessageDTO.getContent());
-			messageDemo.setFrom(user);
-			messageDemo.setType(0);
-			messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
-			for (User user1 : userRepository.getRoleUser(2)) {
-				messageDemo.setTo(user1);
-				messageDemoRepository.save(messageDemo);
-			}
-		}*/
         return requestMessageDTO;
     }
 
@@ -112,9 +100,9 @@ public class MessageServiceImpl implements MessageService {
         messageDemoDTO.setFrom(messageDemo.getFrom().getName());
         messageDemoDTO.setStatus(messageDemo.getStatus());
         if (messageDemo.getType() == 0) {
-            messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
+            messageDemoDTO.setType(Notifications.REQUEST_EDIT_CHECKINOUT);
         } else if (messageDemo.getType() == 1) {
-            messageDemoDTO.setType("REQUEST_A_DAY_OFF");
+            messageDemoDTO.setType(Notifications.REQUEST_A_DAY_OFF);
         }
         messageDemoDTO.setIdRecord(messageDemo.getIdReport());
         messageDemoDTO.setId(messageDemo.getId());
@@ -181,7 +169,7 @@ public class MessageServiceImpl implements MessageService {
             messageReply.setTitle(user.getName() + " not accept leave application of me");
             leaveApplication.setStatus("not accept");
         } else {
-            return new ResponseEntity("ERROR", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Notifications.ERROR, HttpStatus.BAD_REQUEST);
         }
         messageReply.setStatus(false);
         messageReply.setIdReport(idLeaveApplication);

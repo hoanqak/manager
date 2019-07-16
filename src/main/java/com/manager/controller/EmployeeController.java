@@ -41,25 +41,25 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity logout(HttpServletRequest request) {
-		return userService.logOut(request);
+	public ResponseEntity logout(@RequestHeader String token) {
+		return userService.logOut(token);
 	}
 
 	//get profile
 	@GetMapping("/profile")
-	public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
-		return userService.profile(request);
+	public ResponseEntity<ProfileDTO> profile(@RequestHeader String token) {
+		return userService.profile(token);
 	}
 
 	//update profile
 	@PostMapping("/profile")
-	public ResponseEntity updateProfile(@RequestBody ProfileDTO profileDTO, HttpServletRequest request) {
-		return userService.updateProfile(profileDTO, request);
+	public ResponseEntity updateProfile(@RequestBody ProfileDTO profileDTO, @RequestHeader String token) {
+		return userService.updateProfile(profileDTO, token);
 	}
 
 	@PostMapping("/uploadAvatar")
-	public ResponseEntity uploadFile(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
-		return userService.uploadFile(multipartFile, request);
+	public ResponseEntity uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestHeader String token) {
+		return userService.uploadFile(multipartFile, token);
 	}
 
 	//Reset Password, send mail
@@ -76,8 +76,8 @@ public class EmployeeController {
 
 	//Change password in profile
 	@PutMapping("/changePassword")
-	public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
-		return userService.changePassword(resetPasswordDTO, request);
+	public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, @RequestHeader String token) {
+		return userService.changePassword(resetPasswordDTO, token);
 	}
 
 	// check in
