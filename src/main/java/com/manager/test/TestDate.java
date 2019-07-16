@@ -1,5 +1,6 @@
 package com.manager.test;
 
+import com.manager.md5.MD5;
 import com.manager.repository.CheckInOutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,10 @@ public class TestDate {
 	static CheckInOutRepository checkInOutRepository;
 
 	public static void main(String[] args) throws InterruptedException {
-//		System.out.println(new MD5().convertToMD5("12345678"));
-		Date date = new Date(121212021020200l);
-		System.out.println(date);
-		System.out.println(date2String(date));
+		System.out.println(new MD5().convertToMD5("12345678"));
+//		Date date = new Date(121212021020200l);
+//		System.out.println(date);
+//		System.out.println(date2String(date));
 
 	}
 

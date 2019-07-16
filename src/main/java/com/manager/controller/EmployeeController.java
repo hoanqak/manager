@@ -148,5 +148,8 @@ public class EmployeeController {
 		return message.messages(page, size, request);
 	}
 
-
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello";
+    }
 }

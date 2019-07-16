@@ -33,8 +33,8 @@ public class AdminServiceImpl implements AdminService {
 	CheckInOutRepository checkInOutRepository;
 
 	//	mapping model
-	DozerBeanMapper mapper = new DozerBeanMapper();
-
+	@Autowired
+	DozerBeanMapper mapper;
 
 	@Override
 	public PagedResponse<UserProfile2Admin> pageGetAllUser(int pageNumber, int pageSize) {

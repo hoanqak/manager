@@ -56,4 +56,5 @@ public class ManagerController {
         return leaveApplicationService.getListApplicationDTO();
     }
 */
+
 }

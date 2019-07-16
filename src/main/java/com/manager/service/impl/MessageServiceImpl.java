@@ -65,7 +65,6 @@ public class MessageServiceImpl implements MessageService {
             //send for admin
             // role = 1 is admin
             userRepository.getRoleUser(1).forEach(user1 -> {
-                System.out.println(user1.toString());
                 messageDemo.setTo(user1);
                 messageDemoRepository.save(messageDemo);
             });
@@ -168,11 +167,11 @@ public class MessageServiceImpl implements MessageService {
         messageReply.setFrom(user);
         messageReply.setTo(messageDemo.getFrom());
         if (accept == 1) {
-            messageReply.setTitle(user.getName() + " accepted leave application of me");
+            messageReply.setTitle(user.getName() + " accepted leave application of you");
             leaveApplication.setStatus("accept");
 
         } else if (accept == 0) {
-            messageReply.setTitle(user.getName() + " not accept leave application of me");
+            messageReply.setTitle(user.getName() + " not accept leave application of you");
             leaveApplication.setStatus("not accept");
         } else {
             return new ResponseEntity(Notifications.ERROR, HttpStatus.BAD_REQUEST);
