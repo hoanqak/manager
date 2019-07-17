@@ -15,8 +15,6 @@ public interface LeaveApplicationService {
 
 	ResponseEntity listDayOff(int month, HttpServletRequest request);
 
-	LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication);
-
 	ResponseEntity<List<LeaveApplicationDTO>> getListApplicationDTO();
 
 	ResponseEntity listDayOffPage(int page, int size, HttpServletRequest request);

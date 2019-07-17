@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.ConvertDTO;
 import com.manager.data.Notifications;
 import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.LeaveApplicationDTO;
@@ -38,6 +39,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     CheckInOutRepository checkInOutRepository;
+
+    @Autowired
+    ConvertDTO convertDTO;
+
     //get user with token
     public User getUser(HttpServletRequest request) {
         String code = request.getHeader("access_Token");
@@ -83,7 +88,7 @@ public class MessageServiceImpl implements MessageService {
         User user = getUser(request);
         List<MessageDemoDTO> messageDemoDTOList = new LinkedList<MessageDemoDTO>();
         for (MessageDemo messageDemo : messageDemoRepository.getAllMessageByStatusAndToAndType(false, user, type)) {
-            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            MessageDemoDTO messageDemoDTO = convertDTO.convertToMessageDemoDTO(messageDemo);
             messageDemoDTOList.add(messageDemoDTO);
         }
         return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
@@ -96,31 +101,11 @@ public class MessageServiceImpl implements MessageService {
         Page<MessageDemo> pageMessageDemo = messageDemoRepository.getAllMessageByStatusAndToAndTypePage(pageable, false, user);
         List<MessageDemoDTO> messageDemoDTOList = new LinkedList<>();
         pageMessageDemo.getContent().forEach(messageDemo -> {
-            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            MessageDemoDTO messageDemoDTO = convertDTO.convertToMessageDemoDTO(messageDemo);
             messageDemoDTOList.add(messageDemoDTO);
         });
 
         return new ResponseEntity<>(messageDemoDTOList, HttpStatus.OK);
-    }
-
-    public MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo) {
-        MessageDemoDTO messageDemoDTO = new MessageDemoDTO();
-        messageDemoDTO.setId(messageDemo.getId());
-        messageDemoDTO.setContent(messageDemo.getContent());
-        messageDemoDTO.setTitle(messageDemo.getTitle());
-        messageDemoDTO.setTo(messageDemo.getTo().getName());
-        messageDemoDTO.setFrom(messageDemo.getFrom().getName());
-        messageDemoDTO.setStatus(messageDemo.getStatus());
-        if (messageDemo.getType() == 0) {
-            messageDemoDTO.setType("REQUEST_EDIT_CHECKIN");
-        } else if (messageDemo.getType() == 1) {
-            messageDemoDTO.setType("REQUEST_A_DAY_OFF");
-        }
-        messageDemoDTO.setIdRecord(messageDemo.getIdReport());
-        messageDemoDTO.setId(messageDemo.getId());
-        long time = messageDemo.getTimeRequest().getTime();
-        messageDemoDTO.setTimeRequest(time);
-        return messageDemoDTO;
     }
 
     public ResponseEntity readAll(HttpServletRequest request) {
@@ -141,7 +126,7 @@ public class MessageServiceImpl implements MessageService {
         LeaveApplication leaveApplication = leaveApplicationRepository.getLeaveApplicationsById(messageDemo.getIdReport());
         if(leaveApplication != null && messageDemo.getType() == 1) {
             messageDemo.setStatus(true);
-            LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
+            LeaveApplicationDTO leaveApplicationDTO = convertDTO.convertToLeaveApplicationDTO(leaveApplication);
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }else if(checkInOut != null && messageDemo.getType() == 0){
             BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
@@ -190,7 +175,7 @@ public class MessageServiceImpl implements MessageService {
         messageDemoRepository.save(messageDemo);
         messageDemoRepository.save(messageReply);
 //        leaveApplicationRepository.save(leaveApplication);
-        LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationServiceImpl().convertToLeaveApplicationDTO(leaveApplication);
+        LeaveApplicationDTO leaveApplicationDTO = convertDTO.convertToLeaveApplicationDTO(leaveApplication);
         return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
     }
 
@@ -200,7 +185,7 @@ public class MessageServiceImpl implements MessageService {
         List<MessageDemoDTO> messageDemoDTOList = new LinkedList<>();
         Page<MessageDemo> pageMessage = messageDemoRepository.getMessageDemoByTo(pageable, user);
         pageMessage.getContent().forEach(messageDemo -> {
-            MessageDemoDTO messageDemoDTO = convertToMessageDemoDTO(messageDemo);
+            MessageDemoDTO messageDemoDTO = convertDTO.convertToMessageDemoDTO(messageDemo);
             messageDemoDTOList.add(messageDemoDTO);
         });
 

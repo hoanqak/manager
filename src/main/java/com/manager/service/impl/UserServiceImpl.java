@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.ConvertDTO;
 import com.manager.data.Notifications;
 import com.manager.dto.LoginDTO;
 import com.manager.dto.ProfileDTO;
@@ -49,7 +50,8 @@ public class UserServiceImpl implements UserService {
     private PasswordIssuingCodeRepository passwordIssuingCodeRepository;
     @Autowired
     private TokenRepository tokenRepository;
-
+    @Autowired
+    ConvertDTO convertDTO;
     @Value("${emailSystem}")
     String emailSystem;
     @Value("${passwordSystem}")
@@ -181,24 +183,9 @@ public class UserServiceImpl implements UserService {
         String code = request.getHeader("access_Token");
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.getUserById(token.getId());
-        System.out.println(user.getPicture());
         ProfileDTO profileDTO = new ProfileDTO();
         if (user != null) {
-            profileDTO.setAvatar(user.getPicture());
-            System.out.println(profileDTO.getAvatar());
-            profileDTO.setEmail(user.getEmail());
-            profileDTO.setFullName(user.getName());
-            profileDTO.setPhoneNumber(user.getPhoneNumber());
-            if (user.getBirthday() != null) {
-                profileDTO.setDateOfBirth(user.getBirthday().getTime());
-            }
-            if (user.getCreatedDate() != null) {
-                long startDate = user.getCreatedDate().getTime();
-                profileDTO.setStartDate(startDate);
-            }
-            try {
-                profileDTO.setPosition(Details.positions[user.getPosition()]);
-            }catch (ArrayIndexOutOfBoundsException arrE){}
+            profileDTO = convertDTO.convertToProfileDTO(user);
         }
         return new ResponseEntity<>(profileDTO, HttpStatus.OK);
     }
@@ -208,13 +195,13 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
         String code = request.getHeader("access_Token");
         if (profileDTO.getPhoneNumber().length() > 10) {
-            return new ResponseEntity("LENGTH_OF_PHONE_NUMBER_10", HttpStatus.OK);
+            return new ResponseEntity(Notifications.LENGTH_OF_PHONE_NUMBER_10, HttpStatus.OK);
         }
         try {
             System.out.println(profileDTO.getPhoneNumber().length());
-            long number = Long.parseLong(profileDTO.getPhoneNumber());
+            Long.parseLong(profileDTO.getPhoneNumber());
         } catch (NumberFormatException e) {
-            return new ResponseEntity("NUMBER_FORMAT_EXCEPTION", HttpStatus.OK);
+            return new ResponseEntity(Notifications.NUMBER_FORMAT_EXCEPTION, HttpStatus.OK);
         }
 
         Token token = tokenRepository.getTokenByCode(code);

@@ -18,8 +18,6 @@ public interface MessageService {
 
     ResponseEntity<List<MessageDemoDTO>> getAllMessageUnread(HttpServletRequest request, int type);
 
-    MessageDemoDTO convertToMessageDemoDTO(MessageDemo messageDemo);
-
     ResponseEntity readAll(HttpServletRequest request);
 
     ResponseEntity<List<MessageDemoDTO>> getAllMessageUnreadPage(HttpServletRequest request, int page, int size);

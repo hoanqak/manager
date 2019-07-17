@@ -1,5 +1,6 @@
 package com.manager.service.impl;
 
+import com.manager.data.ConvertDTO;
 import com.manager.data.Notifications;
 import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.RequestADayOffDTO;
@@ -40,6 +41,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 	@Autowired
 	CheckInOutRepository checkInOutRepository;
 
+	@Autowired
+	ConvertDTO convertDTO;
 	public ResponseEntity<RequestADayOffDTO> requestADayOff(LeaveApplicationDTO leaveApplicationDTO, HttpServletRequest request) {
 		String codeToken = request.getHeader("access_Token");
 		if (codeToken == null) {
@@ -105,28 +108,11 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 		});
 		return new ResponseEntity(leaveApplicationDTOS, HttpStatus.OK);
 	}
-	public LeaveApplicationDTO convertToLeaveApplicationDTO(LeaveApplication leaveApplication) {
-		LeaveApplicationDTO leaveApplicationDTO = new LeaveApplicationDTO();
-		leaveApplicationDTO.setId(leaveApplication.getId());
-		leaveApplicationDTO.setName(leaveApplication.getUser().getName());
-		leaveApplicationDTO.setReason(leaveApplication.getReason());
-		leaveApplicationDTO.setStatus(leaveApplication.getStatus());
-		long fromDate = leaveApplication.getStartTime().getTime();
-		long toDate = leaveApplication.getEndTime().getTime();
-		leaveApplicationDTO.setStartTime(fromDate);
-		leaveApplicationDTO.setEndTime(toDate);
-		try {
-			leaveApplicationDTO.setPosition(Details.positions[leaveApplication.getUser().getPosition()]);
-		}catch (ArrayIndexOutOfBoundsException arrEx){
-			arrEx.printStackTrace();
-		}
-		return leaveApplicationDTO;
-	}
 
 	public ResponseEntity<List<LeaveApplicationDTO>> getListApplicationDTO() {
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<LeaveApplicationDTO>();
 		for (LeaveApplication leaveApplication : leaveApplicationRepository.findAll()) {
-			LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
+			LeaveApplicationDTO leaveApplicationDTO = convertDTO.convertToLeaveApplicationDTO(leaveApplication);
 			leaveApplicationDTOS.add(leaveApplicationDTO);
 		}
 		return new ResponseEntity<List<LeaveApplicationDTO>>(leaveApplicationDTOS, HttpStatus.OK);
@@ -141,7 +127,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 
 		List<LeaveApplicationDTO> leaveApplicationDTOS = new LinkedList<>();
 		leaveApplicationPage.getContent().forEach(leaveApplication -> {
-			LeaveApplicationDTO leaveApplicationDTO = convertToLeaveApplicationDTO(leaveApplication);
+			LeaveApplicationDTO leaveApplicationDTO = convertDTO.convertToLeaveApplicationDTO(leaveApplication);
 			leaveApplicationDTOS.add(leaveApplicationDTO);
 		});
 
