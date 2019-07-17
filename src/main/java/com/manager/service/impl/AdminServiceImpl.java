@@ -15,6 +15,7 @@ import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
+import javafx.geometry.Pos;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -87,6 +90,7 @@ public class AdminServiceImpl implements AdminService {
 			logger.error(Notifications.UPDATE_USER_FAILED);
 			return null;
 		}
+		userById.setPosition(Position.valueOf(userProfile2Admin.getPosition()).getValue());
 		userById.setStatus(Status.valueOf(userProfile2Admin.getStatus()).getValue());
 		return userById;
 	}
@@ -121,37 +125,52 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public List<TotalWorkingDay> getTotalCheckInInMonth(Date startDate, Date endDate) {
 		List<TotalWorkingDay> list = new ArrayList<>();
-		List<CheckInOut> checkInOuts;
+		List<CheckInOut> checkInOuts = checkInOutRepository.getListCheckInOutsByDayCheckIn(startDate, endDate);
 //		List lấy ra toàn bộ danh sách nhân viên trong công ty.
-		List<User> users = userRepository.findAll();
+//		List<User> users;
 
-		for (User user : users) {
-			checkInOuts = checkInOutRepository.getListCheckInOutsByDayCheckInAndUserId(startDate, endDate, user.getId());
-			TotalWorkingDay workingDayDTO = new TotalWorkingDay();
-			workingDayDTO.setUserId(user.getId());
-			workingDayDTO.setName(user.getName());
-			workingDayDTO.setPosition(user.getPosition());
 
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(startDate);
-			int month = calendar.get(Calendar.MONTH);
-			workingDayDTO.setMonth(month);
+//		Collections.sort(checkInOuts, );
 
-//			chuyển từ List sang Map trong Java 8.
-//			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
-			Map<String, Integer> days = new HashMap<>();
-			for (CheckInOut checkInOut : checkInOuts) {
-				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
-			}
-			double total = 0;
-			for (CheckInOut checkInOut : checkInOuts) {
-				total += checkInOut.getTotalTime();
-			}
-			total = total / 8;
-			workingDayDTO.setTotal(total);
-			workingDayDTO.setDays(days);
-			list.add(workingDayDTO);
-		}
+//		List to Map Java 8
+		Map<Integer, User> maps = checkInOuts.stream().collect(
+				Collectors.toMap(CheckInOut::getId, CheckInOut::getUser));
+		logger.info("Size of maps: " + maps.size());
+
+//		maps.forEach((keyInt, user) -> {
+//			logger.info("key = " + keyInt + ", value = " + user);
+//			TotalWorkingDay totalWorkingDay = new TotalWorkingDay();
+//
+//		});
+
+
+
+//		for (User user : users) {
+//			TotalWorkingDay workingDayDTO = new TotalWorkingDay();
+//			workingDayDTO.setUserId(user.getId());
+//			workingDayDTO.setName(user.getName());
+//			workingDayDTO.setPosition(Position.values()[user.getPosition()].toString());
+//
+//			Calendar calendar = Calendar.getInstance();
+//			calendar.setTime(startDate);
+//			int month = calendar.get(Calendar.MONTH);
+//			workingDayDTO.setMonth(month);
+//
+////			chuyển từ List sang Map trong Java 8.
+////			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
+//			Map<String, Integer> days = new HashMap<>();
+//			for (CheckInOut checkInOut : checkInOuts) {
+//				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
+//			}
+//			double total = 0;
+//			for (CheckInOut checkInOut : checkInOuts) {
+//				total += checkInOut.getTotalTime();
+//			}
+//			total = total / 8;
+//			workingDayDTO.setTotal(total);
+//			workingDayDTO.setDays(days);
+//			list.add(workingDayDTO);
+//		}
 		return list;
 	}
 

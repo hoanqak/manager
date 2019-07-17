@@ -69,7 +69,7 @@ public class Export2Excel {
 
 		cell = row.createCell(COLUMN_INDEX_POSITION);
 		try {
-			int index = totalWorkingDay.getPosition();
+			int index = Position.valueOf(totalWorkingDay.getPosition()).getValue() ;
 			cell.setCellValue(Position.values()[index].toString());
 
 		} catch (Exception e) {

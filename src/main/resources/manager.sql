@@ -1,5 +1,5 @@
-create database manager1;
-use manager1;
+create database manager;
+use manager;
 
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,

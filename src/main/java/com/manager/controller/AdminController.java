@@ -11,6 +11,7 @@ import com.manager.model.User;
 import com.manager.service.AdminService;
 import com.manager.service.CheckInOutService;
 import com.manager.service.MessageService;
+import io.swagger.annotations.Api;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
