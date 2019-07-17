@@ -28,10 +28,10 @@ public class Export2Excel {
 //		create workbook
 		Workbook workbook = getWorkbook(excelFilePath);
 //		create sheet
-		Sheet sheet = workbook.createSheet(months[workingDays.get(0).getMonth()]);
+		Sheet sheet = workbook.createSheet(months[workingDays.get(0).getMonth() - 1]);
 
 		int rowIndex = 0;
-		int month = workingDays.get(0).getMonth() + 1;
+		int month = workingDays.get(0).getMonth();
 		addStyleSheet(workbook, sheet, month);
 		rowIndex++;
 		writeHeader(sheet.createRow(rowIndex));
@@ -69,7 +69,7 @@ public class Export2Excel {
 
 		cell = row.createCell(COLUMN_INDEX_POSITION);
 		try {
-			int index = Position.valueOf(totalWorkingDay.getPosition()).getValue() ;
+			int index = Position.valueOf(totalWorkingDay.getPosition()).getValue();
 			cell.setCellValue(Position.values()[index].toString());
 
 		} catch (Exception e) {
@@ -78,7 +78,7 @@ public class Export2Excel {
 
 
 		int totalDay = 31;
-		int month = totalWorkingDay.getMonth() + 1;
+		int month = totalWorkingDay.getMonth();
 
 //		Map<String, Integer> days có key theo format: "d/M" ( trong do: d la ngay trong thang, M la so thu tu thang).
 		for (int i = 1; i <= totalDay; i++) {

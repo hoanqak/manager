@@ -14,7 +14,7 @@ import java.util.Map;
 public class TotalWorkingDay {
 	private int userId;
 	private String name;
-	private int position;
+	private String position;
 	private double total;
 //	Key là dayCheckIn, giá trị dạng Date.
 //	Integer là giá trị totalTime.

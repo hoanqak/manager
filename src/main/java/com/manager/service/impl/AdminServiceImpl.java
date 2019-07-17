@@ -136,40 +136,52 @@ public class AdminServiceImpl implements AdminService {
 		logger.info("Size of maps: " + maps.size());
 
 
-//		maps.forEach((keyInt, user) -> {
-//			logger.info("key = " + keyInt + ", value = " + user);
-//			TotalWorkingDay totalWorkingDay = new TotalWorkingDay();
-//
-//		});
+		maps.forEach((keyInt, user) -> {
+			logger.info("key = " + keyInt + ", value = " + user);
+		});
 
+		Set<User> set = new HashSet<>(maps.values());
+		int numberOfUser = set.size();
+		logger.info("Size of Set: " + numberOfUser);
 
-//		for (User user : users) {
-//			TotalWorkingDay workingDayDTO = new TotalWorkingDay();
-//			workingDayDTO.setUserId(user.getId());
-//			workingDayDTO.setName(user.getName());
-//			workingDayDTO.setPosition(Position.values()[user.getPosition()].toString());
-//
-//			Calendar calendar = Calendar.getInstance();
-//			calendar.setTime(startDate);
-//			int month = calendar.get(Calendar.MONTH);
-//			workingDayDTO.setMonth(month);
-//
-////			chuyển từ List sang Map trong Java 8.
-////			Map<Date, Integer> days = checkInOuts.stream().collect(Collectors.toMap(CheckInOut::getDayCheckIn, CheckInOut::getTotalTime));
-//			Map<String, Integer> days = new HashMap<>();
-//			for (CheckInOut checkInOut : checkInOuts) {
-//				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
-//			}
-//			double total = 0;
-//			for (CheckInOut checkInOut : checkInOuts) {
-//				total += checkInOut.getTotalTime();
-//			}
-//			total = total / 8;
-//			workingDayDTO.setTotal(total);
-//			workingDayDTO.setDays(days);
-//			list.add(workingDayDTO);
-//		}
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		int month = calendar.get(Calendar.MONTH) + 1;
+
+		set.forEach((user -> {
+			TotalWorkingDay totalWorkingDay = new TotalWorkingDay();
+
+			totalWorkingDay.setUserId(user.getId());
+			totalWorkingDay.setName(user.getName());
+			totalWorkingDay.setPosition(Position.values()[user.getPosition()].toString());
+			totalWorkingDay.setMonth(month);
+
+			Map<String, Integer> days = getDayAndHourOfUser(checkInOuts, user);
+			totalWorkingDay.setDays(days);
+			totalWorkingDay.setTotal(getTotal(days));
+
+			list.add(totalWorkingDay);
+		}));
 		return list;
+	}
+
+	private double getTotal(Map<String, Integer> map) {
+		double total = 0;
+		final int hourInDay = 8;
+		for (String key : map.keySet()) {
+			total += map.get(key);
+		}
+		return total / hourInDay;
+	}
+
+	private Map<String, Integer> getDayAndHourOfUser(List<CheckInOut> list, User user) {
+		Map<String, Integer> days = new HashMap<>();
+		for (CheckInOut checkInOut : list) {
+			if (checkInOut.getUser().getId() == user.getId()) {
+				days.put(date2String(checkInOut.getDayCheckIn()), checkInOut.getTotalTime());
+			}
+		}
+		return days;
 	}
 
 	public void validatePageNumberAndPageSize(int page, int size) {
