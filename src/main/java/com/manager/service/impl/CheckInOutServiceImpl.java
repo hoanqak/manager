@@ -2,7 +2,10 @@ package com.manager.service.impl;
 
 import com.manager.data.ConvertDTO;
 import com.manager.data.Notifications;
+import com.manager.data.Position;
 import com.manager.dto.CheckInOutDTO;
+import com.manager.dto.Checkin2Admin;
+import com.manager.dto.PagedResponse;
 import com.manager.model.CheckInOut;
 import com.manager.model.Token;
 import com.manager.model.User;
@@ -11,7 +14,6 @@ import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
-import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -122,7 +127,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-		String codeToken = request.getHeader("access_Token");
+		String codeToken = request.getHeader("token");
 		if (codeToken == null) {
 			return new ResponseEntity(Notifications.NOT_LOGGED_IN, HttpStatus.BAD_REQUEST);
 		}
@@ -156,9 +161,6 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 			}
 			checkInOut.setEndTime(calendar.getTime());
 			checkInOut.setTotalTime(totalTime);
-
-			checkInOutRepository.save(checkInOut);
-
 			return new ResponseEntity(Notifications.CHECKOUT_SUCCESS, HttpStatus.OK);
 
 		} else {
@@ -170,7 +172,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		int userId = token.getId();
 		List<CheckInOut> checkInOutList = checkInOutRepository.getListCheckInOutByIdUser(userId);
@@ -179,17 +181,29 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ResponseEntity pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize) {
+	public PagedResponse<Checkin2Admin> pageGetAllCheckInsAllUserByDate(long date, int pageNumber, int pageSize) {
+
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<CheckInOut> page = checkInOutRepository.findCheckInOutsByDayCheckIn(pageable, new Date(date));
-		List<CheckInOut> checkInOuts = page.getContent();
-		List<CheckInOutDTO> checkInOutDTOS = new ArrayList<>();
 
-		checkInOuts.forEach(checkInOut -> checkInOutDTOS.add(convertDTO.convertToCheckInOutDTO(checkInOut)));
-		return new ResponseEntity(checkInOutDTOS, HttpStatus.OK);
+		List<CheckInOut> checkInOuts = page.getContent();
+		List<Checkin2Admin> checkin2Admins = new ArrayList<>();
+
+		checkInOuts.forEach(checkInOut -> {
+			Checkin2Admin checkin2Admin = mapper.map(checkInOut, Checkin2Admin.class);
+
+//          use Dozer?
+			checkin2Admin.setName(checkInOut.getUser().getName());
+			checkin2Admin.setUserId(checkInOut.getUser().getId());
+			checkin2Admin.setPosition(Position.values()[checkInOut.getUser().getPosition()].toString());
+
+			checkin2Admins.add(checkin2Admin);
+
+		});
+
+		return new PagedResponse<>(checkin2Admins, pageNumber, pageSize, checkInOuts.size(), page.getTotalPages(), page.isLast());
 	}
 
-	@SuppressWarnings("Duplicates")
 	@Override
 	public ResponseEntity getAllCheckInsOfUser(long startDate, long endDate, int idUser, int pageNumber, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);

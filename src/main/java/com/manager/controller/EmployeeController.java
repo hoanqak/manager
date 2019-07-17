@@ -7,17 +7,18 @@ import com.manager.service.LeaveApplicationService;
 import com.manager.service.MessageService;
 import com.manager.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
-@Api(value="CONTROLLER EMPLOYEE")
+@Api(value = "CONTROLLER EMPLOYEE")
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
@@ -31,13 +32,14 @@ public class EmployeeController {
 	@Autowired
 	CheckInOutService checkInOutService;
 
+	@Qualifier("messageServiceImpl")
 	@Autowired
 	MessageService message;
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO,
+	public ResponseEntity<String> login(@RequestBody @Valid LoginDTO loginDTO, BindingResult result,
 	                                    HttpServletRequest request) {
-		return userService.login(loginDTO, request);
+		return userService.login(loginDTO, result, request);
 	}
 
 	@PostMapping("/logout")
@@ -58,14 +60,14 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/uploadAvatar")
-	public ResponseEntity uploadFile(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
+	public ResponseEntity uploadFile(@RequestParam(name = "file", required = false) MultipartFile multipartFile, HttpServletRequest request) {
 		return userService.uploadFile(multipartFile, request);
 	}
 
 	//Reset Password, send mail
 	@PostMapping("/forgotPassword")
-	public ResponseEntity<String> forgotPassword(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
-		return userService.forgotPassword(loginDTO, request);
+	public ResponseEntity<String> forgotPassword(@RequestBody @Valid LoginDTO loginDTO, BindingResult result, HttpServletRequest request) {
+		return userService.forgotPassword(loginDTO, result, request);
 	}
 
 	//reset password in mail when request forgot password
@@ -76,8 +78,8 @@ public class EmployeeController {
 
 	//Change password in profile
 	@PutMapping("/changePassword")
-	public ResponseEntity resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
-		return userService.changePassword(resetPasswordDTO, request);
+	public ResponseEntity resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO, BindingResult result, HttpServletRequest request) {
+		return userService.changePassword(resetPasswordDTO, result, request);
 	}
 
 	// check in
@@ -91,12 +93,6 @@ public class EmployeeController {
 	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
 		return checkInOutService.checkOut(checkInOutDTO, request);
 	}
-
-/*	//get list checkInOuts
-	@GetMapping("/checkInOuts")
-	public ResponseEntity<List<CheckInOut>> checkInOuts(HttpServletRequest request) {
-		return checkInOutService.getListCheckInOut(request);
-	}*/
 
 	//get all list check in check out
 	@GetMapping("/checkInOuts/{page}/{size}")
