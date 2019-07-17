@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer{
     DefenderManager defenderManager;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String excludePath[] ={"/**/login","/**/logout", "/**/notLoggedIn","/**/forgotPassword", "/**/notAdmin", "/swagger-ui.html/**", "/**/admin/**", "/**/manager/**", "**/yourNotManager"};
+        String excludePath[] ={"/**/login","/**/logout", "/**/notLoggedIn","/**/forgotPassword", "/**/notAdmin", "**/swagger-ui.html/**", "/**/admin/**", "/**/manager/**", "**/yourNotManager"};
         registry.addInterceptor(defender).addPathPatterns("/**").excludePathPatterns(excludePath);
         registry.addInterceptor(defenderAdmin).addPathPatterns("/**/admin/**").addPathPatterns("/**/admin");
         registry.addInterceptor(defenderManager).addPathPatterns("/**/manager/**");

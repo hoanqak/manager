@@ -18,16 +18,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 @Transactional
 public class MessageServiceImpl implements MessageService {
-
+    public final Logger logger = Logger.getLogger(MessageServiceImpl.class.getName());
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -56,31 +58,21 @@ public class MessageServiceImpl implements MessageService {
         if (requestMessageDTO.getType() == 0) {
             MessageDemo messageDemo = new MessageDemo();
             messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
-            messageDemo.setTitle("User: " + "(" + user.getName() + ")" + " Request edit checkInOut time");
+            messageDemo.setTitle("User: " + user.getName()+ " Request edit checkInOut time");
             messageDemo.setContent(requestMessageDTO.getContent());
             messageDemo.setFrom(user);
             messageDemo.setType(0);
             messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
 
             //send for admin
-            userRepository.getRoleUser(2).forEach(user1 -> {
-                System.out.println(user1.toString());
-                messageDemo.setTo(user1);
-                messageDemoRepository.save(messageDemo);
+            userRepository.getRoleUser(1).forEach(user1 -> {
+                if(user1.getId() != user.getId()){
+                    messageDemo.setTo(user1);
+                    messageDemoRepository.save(messageDemo);
+                }
+
             });
         }
-		/* else if (requestMessageDTO.getType() == 1) {
-			MessageDemo messageDemo = new MessageDemo();
-			messageDemo.setTitle("ID: " + user.getId() + "(" + user.getName() + ")" + " Request edit checkOut time");
-			messageDemo.setContent(requestMessageDTO.getContent());
-			messageDemo.setFrom(user);
-			messageDemo.setType(0);
-			messageDemo.setIdReport(requestMessageDTO.getIdCheckInOut());
-			for (User user1 : userRepository.getRoleUser(2)) {
-				messageDemo.setTo(user1);
-				messageDemoRepository.save(messageDemo);
-			}
-		}*/
         return requestMessageDTO;
     }
 
@@ -129,10 +121,10 @@ public class MessageServiceImpl implements MessageService {
             LeaveApplicationDTO leaveApplicationDTO = convertDTO.convertToLeaveApplicationDTO(leaveApplication);
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }else if(checkInOut != null && messageDemo.getType() == 0){
-            BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
-            DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
-            dozerBeanMapper.addMapping(beanMappingBuilder);
-            CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
+//            BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
+//            DozerBeanMapper dozerBeanMapper = new DozerBeanMapper();
+//            dozerBeanMapper.addMapping(beanMappingBuilder);
+            CheckInOutDTO checkInOutDTO = convertDTO.convertToCheckInOutDTO(checkInOut);
             return new ResponseEntity(checkInOutDTO, HttpStatus.OK);
         }
         else{
