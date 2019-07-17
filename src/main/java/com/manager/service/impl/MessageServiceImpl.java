@@ -148,7 +148,7 @@ public class MessageServiceImpl implements MessageService {
             return new ResponseEntity(leaveApplicationDTO, HttpStatus.OK);
         }else if(checkInOut != null && messageDemo.getType() == 0){
             BeanMappingBuilder beanMappingBuilder = new CheckInOutServiceImpl().getBeanMappingBuilder();
-            dozerBeanMapper =  new DozerBeanMapper();
+//            dozerBeanMapper =  new DozerBeanMapper();
             dozerBeanMapper.addMapping(beanMappingBuilder);
             CheckInOutDTO checkInOutDTO = dozerBeanMapper.map(checkInOut, CheckInOutDTO.class);
             return new ResponseEntity(checkInOutDTO, HttpStatus.OK);

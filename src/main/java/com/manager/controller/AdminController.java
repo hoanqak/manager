@@ -9,6 +9,7 @@ import com.manager.service.AdminService;
 import com.manager.service.CheckInOutService;
 import com.manager.service.MessageService;
 import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,6 @@ public class AdminController {
 	CheckInOutService checkInOutService;
 	@Autowired
 	MessageService messageService;
-
-	@Autowired
-	DozerBeanMapper mapper;
 
 	@GetMapping("/users/")
 	public PagedResponse<UserProfile2Admin> getAllUser(@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {

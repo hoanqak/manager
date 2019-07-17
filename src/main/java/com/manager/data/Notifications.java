@@ -32,4 +32,5 @@ public interface Notifications {
       String USER_DOESNT_EXISTS = "USER_DOESNT_EXISTS";
       String TIMEOUT = "TIMEOUT";
       String REQUEST_EDIT_CHECKIN = "REQUEST_EDIT_CHECKIN";
+      String ERROR_STARTDATE_AND_ENDDATE = "ERROR_STARTDATE_AND_ENDDATE";
 }
