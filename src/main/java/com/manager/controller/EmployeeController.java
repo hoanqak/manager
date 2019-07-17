@@ -82,17 +82,17 @@ public class EmployeeController {
 		return userService.changePassword(resetPasswordDTO, result, request);
 	}
 
-//	// check in
-//	@PostMapping("/checkIn")
-//	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-//		return checkInOutService.checkIn(checkInOutDTO, request);
-//	}
-//
-//	// check out
-//	@PostMapping("/checkOut")
-//	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-//		return checkInOutService.checkOut(checkInOutDTO, request);
-//	}
+	// check in
+	@PostMapping("/checkIn")
+	public ResponseEntity<String> checkIn(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return checkInOutService.checkIn(checkInOutDTO, request);
+	}
+
+	// check out
+	@PostMapping("/checkOut")
+	public ResponseEntity CheckOut(@RequestBody CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
+		return checkInOutService.checkOut(checkInOutDTO, request);
+	}
 
 	//get all list check in check out
 	@GetMapping("/checkInOuts/{page}/{size}")

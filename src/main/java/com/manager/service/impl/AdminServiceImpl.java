@@ -15,7 +15,6 @@ import com.manager.model.User;
 import com.manager.repository.CheckInOutRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.AdminService;
-import javafx.geometry.Pos;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public User createUser(SignUpRequest signUpRequest) {
 		User userByEmail = userRepository.findUserByEmail(signUpRequest.getEmail());
-		if(userByEmail != null){
+		if (userByEmail != null) {
 			logger.error(Notifications.USER_ALREADY_EXISTS + " with email: " + signUpRequest.getEmail());
 			logger.error(Notifications.CREATE_USER_FAILED);
 			return null;
@@ -85,7 +83,7 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public User updateUserStatus(int id, UserProfile2Admin userProfile2Admin) {
 		User userById = userRepository.findUserById(id);
-		if(userById == null){
+		if (userById == null) {
 			logger.error(Notifications.USER_NOT_EXISTS + " with Id: " + id);
 			logger.error(Notifications.UPDATE_USER_FAILED);
 			return null;
@@ -137,12 +135,12 @@ public class AdminServiceImpl implements AdminService {
 				Collectors.toMap(CheckInOut::getId, CheckInOut::getUser));
 		logger.info("Size of maps: " + maps.size());
 
+
 //		maps.forEach((keyInt, user) -> {
 //			logger.info("key = " + keyInt + ", value = " + user);
 //			TotalWorkingDay totalWorkingDay = new TotalWorkingDay();
 //
 //		});
-
 
 
 //		for (User user : users) {

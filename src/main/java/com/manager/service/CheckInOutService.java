@@ -1,5 +1,6 @@
 package com.manager.service;
 
+import com.manager.dto.CheckInOutDTO;
 import com.manager.dto.Checkin2Admin;
 import com.manager.dto.PagedResponse;
 import com.manager.model.CheckInOut;
@@ -8,11 +9,12 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 @Service
 public interface CheckInOutService {
-//	ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
-//
-//	ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
+	ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
+
+	ResponseEntity checkOut(CheckInOutDTO checkInOutDTO, HttpServletRequest request);
 
 	ResponseEntity<List<CheckInOut>> getListCheckInOut(HttpServletRequest request);
 
@@ -24,7 +26,7 @@ public interface CheckInOutService {
 
 	ResponseEntity getCheckInOutAndPage(int page, int size, HttpServletRequest request);
 
-//	boolean updateCheckInOut(CheckInOutDTO checkInOutDTO);
+	boolean updateCheckInOut(CheckInOutDTO checkInOutDTO);
 
 	ResponseEntity getACheckInById(int id);
 
