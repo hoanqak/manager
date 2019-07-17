@@ -5,6 +5,7 @@ import com.manager.dto.LeaveApplicationDTO;
 import com.manager.dto.MessageDemoDTO;
 import com.manager.dto.ProfileDTO;
 import com.manager.model.*;
+import javafx.geometry.Pos;
 import org.dozer.DozerBeanMapper;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ public class ConvertDTO {
             profileDTO.setStartDate(startDate);
         }
         try {
-            profileDTO.setPosition(Details.positions[user.getPosition()]);
+            profileDTO.setPosition(Position.values()[user.getPosition()].toString());
         } catch (ArrayIndexOutOfBoundsException arrE) {
         }
 

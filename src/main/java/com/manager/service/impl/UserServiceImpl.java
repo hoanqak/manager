@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
 
 
     public ResponseEntity<ProfileDTO> profile(HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.getUserById(token.getId());
         ProfileDTO profileDTO = new ProfileDTO();
@@ -208,16 +208,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<User> updateProfile(ProfileDTO profileDTO, HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
-        if (profileDTO.getPhoneNumber().length() > 10) {
-            return new ResponseEntity(Notifications.LENGTH_OF_PHONE_NUMBER_10, HttpStatus.OK);
-        }
-        try {
-            System.out.println(profileDTO.getPhoneNumber().length());
-            Long.parseLong(profileDTO.getPhoneNumber());
-        } catch (NumberFormatException e) {
-            return new ResponseEntity(Notifications.NUMBER_FORMAT_EXCEPTION, HttpStatus.OK);
-        }
+        String code = request.getHeader("token");
+//        if (profileDTO.getPhoneNumber().length() > 10) {
+//            return new ResponseEntity(Notifications.LENGTH_OF_PHONE_NUMBER_10, HttpStatus.OK);
+//        }
+//        try {
+//            System.out.println(profileDTO.getPhoneNumber().length());
+//            Long.parseLong(profileDTO.getPhoneNumber());
+//        } catch (NumberFormatException e) {
+//            return new ResponseEntity(Notifications.NUMBER_FORMAT_EXCEPTION, HttpStatus.OK);
+//        }
 
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.findById(token.getId()).get();

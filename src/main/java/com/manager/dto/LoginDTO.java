@@ -18,7 +18,7 @@ public class LoginDTO {
 	@Email(message = "TYPE_NOT_EMAIL")
 	private String email;
 
-	@Length(max = 15, min = 8)
+	@Length(max = 15, min = 6)
 	@NotNull(message = "PASSWORD_NOT_NULL")
 	private String password;
 

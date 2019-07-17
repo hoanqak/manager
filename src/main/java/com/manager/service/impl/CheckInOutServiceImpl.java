@@ -14,6 +14,7 @@ import com.manager.repository.TokenRepository;
 import com.manager.repository.UserRepository;
 import com.manager.service.CheckInOutService;
 import org.dozer.DozerBeanMapper;
+import org.dozer.loader.api.BeanMappingBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -74,7 +72,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 
 	@Override
 	public ResponseEntity<String> checkIn(CheckInOutDTO checkInOutDTO, HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		if (code != null) {
 			Token token = tokenRepository.getTokenByCode(code);
 			User user = userRepository.getUserById(token.getId());
@@ -190,7 +188,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 		List<Checkin2Admin> checkin2Admins = new ArrayList<>();
 
 		checkInOuts.forEach(checkInOut -> {
-			Checkin2Admin checkin2Admin = mapper.map(checkInOut, Checkin2Admin.class);
+			Checkin2Admin checkin2Admin = dozerBeanMapper.map(checkInOut, Checkin2Admin.class);
 
 //          use Dozer?
 			checkin2Admin.setName(checkInOut.getUser().getName());
@@ -275,7 +273,7 @@ public class CheckInOutServiceImpl implements CheckInOutService {
 	}
 
 	public User getUserInHeader(HttpServletRequest request) {
-		String code = request.getHeader("access_Token");
+		String code = request.getHeader("token");
 		Token token = tokenRepository.getTokenByCode(code);
 		User user = userRepository.getUserById(token.getId());
 

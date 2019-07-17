@@ -58,7 +58,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
 			calendarToDate.setTimeInMillis(leaveApplicationDTO.getEndTime());
 
 			if(leaveApplicationDTO.getStartTime() > leaveApplicationDTO.getEndTime()){
-				return new ResponseEntity("ERROR_STARTDATE_AND_ENDDATE", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity(Notifications.ERROR_STARTDATE_AND_ENDDATE, HttpStatus.BAD_REQUEST);
 			}
 
 			LeaveApplication leaveApplication = new LeaveApplication();

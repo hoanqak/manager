@@ -47,7 +47,7 @@ public class MessageServiceImpl implements MessageService {
 
     //get user with token
     public User getUser(HttpServletRequest request) {
-        String code = request.getHeader("access_Token");
+        String code = request.getHeader("token");
         Token token = tokenRepository.getTokenByCode(code);
         User user = userRepository.getUserById(token.getId());
         return user;
